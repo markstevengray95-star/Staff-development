@@ -46,6 +46,7 @@ import "teaching-cpd/app/micro-cpd.css";
 import "teaching-cpd/app/impact.css";
 import "teaching-cpd/app/department-cpd.css";
 import "teaching-cpd/app/course-slide-formatting.css";
+import "./zones-cpd-theme.css";
 
 export default function CpdLayout({ children }: { children: ReactNode }) {
   return <>
