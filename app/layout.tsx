@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import CloudSyncGate from "./components/CloudSyncGate";
 import CpdNavigationBridge from "./components/CpdNavigationBridge";
+import ZonesQuickAccess from "./components/ZonesQuickAccess";
 import "./globals.css";
+import "./zones-experience.css";
 
 export const metadata: Metadata = {
   title: "Staff Development | Whole-School Learning & Regulation",
@@ -13,6 +15,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en">
       <body>
         <CpdNavigationBridge />
+        <ZonesQuickAccess />
         <CloudSyncGate>{children}</CloudSyncGate>
       </body>
     </html>
