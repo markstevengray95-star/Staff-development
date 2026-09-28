@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import CloudSyncGate from "./components/CloudSyncGate";
+import CpdNavigationBridge from "./components/CpdNavigationBridge";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -10,7 +11,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body><CloudSyncGate>{children}</CloudSyncGate></body>
+      <body>
+        <CpdNavigationBridge />
+        <CloudSyncGate>{children}</CloudSyncGate>
+      </body>
     </html>
   );
 }
