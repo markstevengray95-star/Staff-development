@@ -4,11 +4,11 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 
 const tools = [
-  { label: "Regulation Room", icon: "◇", targets: ["Regulation Hub", "Regulation Room"] },
-  { label: "Student Check-in", icon: "◉", targets: ["Student Support", "Student Check-in"] },
-  { label: "Scenario Practice", icon: "◆", targets: ["Zones Practice", "Scenario Practice"] },
-  { label: "Intervention Plans", icon: "✓", targets: ["Interventions", "Intervention Plans"] },
-  { label: "Staff & Impact", icon: "▦", targets: ["Staff Dashboard", "Impact Hub"] },
+  { id: "regulation", label: "Regulation Room", icon: "◇", targets: ["Regulation Hub", "Regulation Room"] },
+  { id: "students", label: "Student Check-in", icon: "◉", targets: ["Student Support", "Student Check-in"] },
+  { id: "practice", label: "Scenario Practice", icon: "◆", targets: ["Zones Practice", "Scenario Practice"] },
+  { id: "interventions", label: "Intervention Plans", icon: "✓", targets: ["Interventions", "Intervention Plans"] },
+  { id: "staff", label: "Staff & Impact", icon: "▦", targets: ["Staff Dashboard", "Impact Hub"] },
 ];
 
 export default function ZonesQuickAccess() {
@@ -18,6 +18,28 @@ export default function ZonesQuickAccess() {
   useEffect(() => {
     document.body.classList.toggle("zones-home", visible);
     return () => document.body.classList.remove("zones-home");
+  }, [visible]);
+
+  useEffect(() => {
+    if (!visible) return;
+    const requested = window.sessionStorage.getItem("staff-development-open-zone");
+    if (!requested) return;
+    window.sessionStorage.removeItem("staff-development-open-zone");
+    const tool = tools.find((item) => item.id === requested);
+    if (!tool) return;
+
+    let attempts = 0;
+    const openRequested = () => {
+      attempts += 1;
+      const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>(".navButton"));
+      const target = buttons.find((button) => tool.targets.some((name) => (button.textContent || "").toLowerCase().includes(name.toLowerCase())));
+      if (target) {
+        target.click();
+        return;
+      }
+      if (attempts < 8) window.setTimeout(openRequested, 120);
+    };
+    window.setTimeout(openRequested, 80);
   }, [visible]);
 
   if (!visible) return null;
