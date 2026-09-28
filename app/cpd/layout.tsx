@@ -49,6 +49,7 @@ import "teaching-cpd/app/department-cpd.css";
 import "teaching-cpd/app/course-slide-formatting.css";
 import "./zones-cpd-theme.css";
 import "./zones-cpd-deck.css";
+import "./cpd-zones-shortcuts.css";
 
 export default function CpdLayout({ children }: { children: ReactNode }) {
   return <>
