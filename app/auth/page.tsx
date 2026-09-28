@@ -1,13 +1,20 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { getSupabaseBrowserClient } from "@/lib/supabase";
+import { getSupabaseBrowserClient, getSupabasePublicConfig } from "@/lib/supabase";
+
+type Mode = "signin" | "signup" | "admin";
+type SignInMethod = "username" | "email";
+type SessionPayload = { access_token: string; refresh_token: string; error?: string };
 
 export default function AuthPage() {
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [mode, setMode] = useState<Mode>("signin");
+  const [signInMethod, setSignInMethod] = useState<SignInMethod>("username");
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [setupCode, setSetupCode] = useState("");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -26,28 +33,73 @@ export default function AuthPage() {
     setBusy(true);
     setMessage("");
     try {
-      if (mode === "signin") {
-        const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-        if (error) throw error;
-        window.location.replace(nextPath());
-      } else {
-        const { data, error } = await supabase.auth.signUp({
+      if (mode === "admin") {
+        const session = await callPublicFunction("bootstrap-admin", {
+          code: setupCode.trim(),
+          username: normaliseUsername(username || "zonesadmin"),
           email: email.trim(),
           password,
-          options: {
-            data: { full_name: name.trim() },
-            emailRedirectTo: `${window.location.origin}/auth?next=${encodeURIComponent(nextPath())}`,
-          },
+          displayName: name.trim() || "Platform Admin",
         });
-        if (error) throw error;
-        if (data.session) window.location.replace(nextPath());
-        else setMessage("Account created. Check your email to confirm it, then return here to sign in.");
+        await applySession(session);
+        window.location.replace("/cpd");
+        return;
       }
+
+      if (mode === "signin") {
+        if (signInMethod === "username") {
+          const session = await callPublicFunction("username-login", {
+            username: normaliseUsername(username),
+            password,
+          });
+          await applySession(session);
+        } else {
+          const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+          if (error) throw error;
+        }
+        window.location.replace(nextPath());
+        return;
+      }
+
+      const cleanUsername = normaliseUsername(username);
+      if (!usernameIsValid(cleanUsername)) throw new Error("Username must be 3–32 characters using letters, numbers, dots, dashes or underscores.");
+      const { data, error } = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+        options: {
+          data: { full_name: name.trim(), username: cleanUsername },
+          emailRedirectTo: `${window.location.origin}/auth?next=${encodeURIComponent(nextPath())}`,
+        },
+      });
+      if (error) throw error;
+      if (data.session) window.location.replace(nextPath());
+      else setMessage("Account created. Check your email to confirm it, then sign in with your username and password.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Unable to authenticate.");
     } finally {
       setBusy(false);
     }
+  }
+
+  async function applySession(payload: SessionPayload) {
+    if (!payload.access_token || !payload.refresh_token) throw new Error(payload.error || "Sign-in failed.");
+    const { error } = await getSupabaseBrowserClient().auth.setSession({
+      access_token: payload.access_token,
+      refresh_token: payload.refresh_token,
+    });
+    if (error) throw error;
+  }
+
+  async function callPublicFunction(name: string, body: Record<string, unknown>): Promise<SessionPayload> {
+    const { url, key } = getSupabasePublicConfig();
+    const response = await fetch(`${url}/functions/v1/${name}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", apikey: key },
+      body: JSON.stringify(body),
+    });
+    const payload = await response.json().catch(() => ({ error: "Authentication service returned an invalid response." }));
+    if (!response.ok) throw new Error(payload.error || "Authentication failed.");
+    return payload as SessionPayload;
   }
 
   async function oauth(provider: "google" | "azure") {
@@ -69,7 +121,7 @@ export default function AuthPage() {
 
   async function magicLink() {
     if (!email.trim()) {
-      setMessage("Enter your email address first.");
+      setMessage("Switch to email sign-in and enter your email address first.");
       return;
     }
     const supabase = getSupabaseBrowserClient();
@@ -84,7 +136,7 @@ export default function AuthPage() {
 
   async function resetPassword() {
     if (!email.trim()) {
-      setMessage("Enter your email address first.");
+      setMessage("Switch to email sign-in and enter your email address first.");
       return;
     }
     const supabase = getSupabaseBrowserClient();
@@ -96,42 +148,62 @@ export default function AuthPage() {
     setMessage(error ? error.message : "Password reset email sent.");
   }
 
+  function chooseMode(next: Mode) {
+    setMode(next);
+    setMessage("");
+    setPassword("");
+    if (next === "admin" && !username) setUsername("zonesadmin");
+  }
+
+  const heading = mode === "signin" ? "Welcome back" : mode === "signup" ? "Create your Staff Development account" : "Activate platform admin";
+
   return <main style={styles.page}>
     <section style={styles.hero}>
       <span style={styles.eyebrow}>STAFF DEVELOPMENT</span>
       <h1 style={styles.heroTitle}>One account for CPD, regulation and whole-school support.</h1>
-      <p style={styles.heroText}>Your CPD progress, regulation check-ins and intervention records now sync securely to the shared school platform instead of being tied to one browser.</p>
+      <p style={styles.heroText}>Use a memorable username and password, or continue with your school account. Progress and school access stay connected to the same secure account.</p>
       <div style={styles.featureGrid}>
-        <Feature title="Cloud progress" text="Continue CPD on another device." />
-        <Feature title="School access" text="Plans and seats come from the server, not local settings." />
-        <Feature title="Protected records" text="School data is scoped with row-level security." />
+        <Feature title="Simple sign-in" text="Use a username and password without entering an email each time." />
+        <Feature title="Full CPD library" text="Open the complete professional learning catalogue from the same account." />
+        <Feature title="Protected admin" text="Platform administration uses a separate one-time activation process." />
       </div>
     </section>
 
     <section style={styles.card}>
-      <span style={styles.eyebrow}>{mode === "signin" ? "SIGN IN" : "CREATE ACCOUNT"}</span>
-      <h2 style={{ margin: "8px 0 6px", fontSize: 28 }}>{mode === "signin" ? "Welcome back" : "Create your Staff Development account"}</h2>
-      <p style={styles.muted}>Use your school email where possible so your organisation can add you to a paid school plan.</p>
+      <span style={styles.eyebrow}>{mode === "admin" ? "ADMIN SETUP" : mode === "signup" ? "CREATE ACCOUNT" : "SIGN IN"}</span>
+      <h2 style={{ margin: "8px 0 6px", fontSize: 28 }}>{heading}</h2>
+      <p style={styles.muted}>{mode === "admin" ? "Use the one-time setup code supplied by the platform owner. After activation, your admin username and password work like a normal sign-in." : "Username sign-in is the quickest option. Email, Google and Microsoft remain available too."}</p>
 
-      <button style={styles.provider} disabled={busy} onClick={() => oauth("google")}><b>G</b><span>Continue with Google</span></button>
-      <button style={styles.provider} disabled={busy} onClick={() => oauth("azure")}><b>▦</b><span>Continue with Microsoft</span></button>
-      <div style={styles.divider}><span>or use email</span></div>
+      {mode !== "admin" && <>
+        <button type="button" style={styles.provider} disabled={busy} onClick={() => oauth("google")}><b>G</b><span>Continue with Google</span></button>
+        <button type="button" style={styles.provider} disabled={busy} onClick={() => oauth("azure")}><b>▦</b><span>Continue with Microsoft</span></button>
+        <div style={styles.divider}><span>or use a password</span></div>
+      </>}
 
-      <form onSubmit={submit} style={{ display: "grid", gap: 14 }}>
-        {mode === "signup" && <label style={styles.label}>Full name<input style={styles.input} required value={name} onChange={(event) => setName(event.target.value)} /></label>}
-        <label style={styles.label}>Email<input style={styles.input} required type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} /></label>
-        <label style={styles.label}>Password<input style={styles.input} required minLength={8} type="password" autoComplete={mode === "signin" ? "current-password" : "new-password"} value={password} onChange={(event) => setPassword(event.target.value)} /></label>
-        <button style={styles.primary} disabled={busy}>{busy ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}</button>
-      </form>
-
-      {mode === "signin" && <div style={styles.actionRow}>
-        <button style={styles.linkButton} disabled={busy} onClick={magicLink}>Email me a sign-in link</button>
-        <button style={styles.linkButton} disabled={busy} onClick={resetPassword}>Reset password</button>
+      {mode === "signin" && <div style={styles.segment}>
+        <button type="button" style={signInMethod === "username" ? styles.segmentActive : styles.segmentButton} onClick={() => { setSignInMethod("username"); setMessage(""); }}>Username</button>
+        <button type="button" style={signInMethod === "email" ? styles.segmentActive : styles.segmentButton} onClick={() => { setSignInMethod("email"); setMessage(""); }}>Email</button>
       </div>}
 
-      <button style={{ ...styles.linkButton, marginTop: 10 }} onClick={() => { setMode(mode === "signin" ? "signup" : "signin"); setMessage(""); }}>
-        {mode === "signin" ? "New here? Create an account" : "Already have an account? Sign in"}
-      </button>
+      <form onSubmit={submit} style={{ display: "grid", gap: 14, marginTop: 16 }}>
+        {(mode === "signup" || mode === "admin") && <label style={styles.label}>Full name<input style={styles.input} required={mode === "signup"} value={name} onChange={(event) => setName(event.target.value)} autoComplete="name" /></label>}
+        {(mode !== "signin" || signInMethod === "username") && <label style={styles.label}>Username<input style={styles.input} required value={username} onChange={(event) => setUsername(normaliseUsername(event.target.value))} autoCapitalize="none" autoCorrect="off" autoComplete="username" placeholder={mode === "admin" ? "zonesadmin" : "e.g. mgray"} /></label>}
+        {(mode !== "signin" || signInMethod === "email") && <label style={styles.label}>Email<input style={styles.input} required type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} /></label>}
+        <label style={styles.label}>Password<input style={styles.input} required minLength={mode === "admin" ? 12 : 8} type="password" autoComplete={mode === "signin" ? "current-password" : "new-password"} value={password} onChange={(event) => setPassword(event.target.value)} /></label>
+        {mode === "admin" && <label style={styles.label}>One-time admin setup code<input style={styles.input} required value={setupCode} onChange={(event) => setSetupCode(event.target.value.toUpperCase())} autoComplete="off" placeholder="ADMIN-…" /></label>}
+        <button style={styles.primary} disabled={busy}>{busy ? "Please wait…" : mode === "signin" ? "Sign in" : mode === "signup" ? "Create account" : "Create admin account"}</button>
+      </form>
+
+      {mode === "signin" && signInMethod === "email" && <div style={styles.actionRow}>
+        <button type="button" style={styles.linkButton} disabled={busy} onClick={magicLink}>Email me a sign-in link</button>
+        <button type="button" style={styles.linkButton} disabled={busy} onClick={resetPassword}>Reset password</button>
+      </div>}
+
+      <div style={styles.footerActions}>
+        {mode !== "signup" && <button type="button" style={styles.linkButton} onClick={() => chooseMode("signup")}>Create a staff account</button>}
+        {mode !== "signin" && <button type="button" style={styles.linkButton} onClick={() => chooseMode("signin")}>Back to sign in</button>}
+        {mode !== "admin" && <button type="button" style={styles.adminLink} onClick={() => chooseMode("admin")}>Platform admin setup</button>}
+      </div>
 
       {message && <div style={styles.notice} role="status">{message}</div>}
     </section>
@@ -140,6 +212,14 @@ export default function AuthPage() {
 
 function Feature({ title, text }: { title: string; text: string }) {
   return <div style={styles.feature}><strong>{title}</strong><span>{text}</span></div>;
+}
+
+function normaliseUsername(value: string) {
+  return value.trim().toLowerCase().replace(/\s+/g, "");
+}
+
+function usernameIsValid(value: string) {
+  return /^[a-z0-9][a-z0-9._-]{2,31}$/.test(value);
 }
 
 function nextPath() {
@@ -160,10 +240,15 @@ const styles: Record<string, React.CSSProperties> = {
   muted: { color: "#61747c", lineHeight: 1.55, marginBottom: 22 },
   provider: { width: "100%", display: "flex", gap: 12, alignItems: "center", justifyContent: "center", padding: "13px 16px", marginTop: 10, borderRadius: 12, border: "1px solid #cdd9de", background: "white", color: "#173f57", fontWeight: 700, cursor: "pointer" },
   divider: { textAlign: "center", color: "#819199", fontSize: 12, margin: "18px 0" },
+  segment: { display: "grid", gridTemplateColumns: "1fr 1fr", padding: 4, borderRadius: 12, background: "#edf2f4", gap: 4 },
+  segmentButton: { border: 0, borderRadius: 9, padding: "10px 12px", background: "transparent", color: "#5c7079", fontWeight: 750, cursor: "pointer" },
+  segmentActive: { border: 0, borderRadius: 9, padding: "10px 12px", background: "white", color: "#173f57", fontWeight: 800, cursor: "pointer", boxShadow: "0 2px 8px rgba(23,63,87,.10)" },
   label: { display: "grid", gap: 7, fontSize: 13, fontWeight: 750 },
   input: { width: "100%", boxSizing: "border-box", padding: "12px 13px", borderRadius: 10, border: "1px solid #cbd7dc", font: "inherit", outline: "none" },
   primary: { border: 0, borderRadius: 11, padding: "13px 16px", background: "#173f57", color: "white", fontWeight: 800, cursor: "pointer" },
   actionRow: { display: "flex", justifyContent: "space-between", gap: 12, marginTop: 12, flexWrap: "wrap" },
+  footerActions: { display: "flex", justifyContent: "space-between", gap: 12, marginTop: 16, flexWrap: "wrap", alignItems: "center" },
   linkButton: { border: 0, padding: 0, background: "transparent", color: "#285f75", textDecoration: "underline", cursor: "pointer", font: "inherit", fontSize: 13 },
+  adminLink: { border: 0, padding: 0, background: "transparent", color: "#6c5968", cursor: "pointer", font: "inherit", fontSize: 12 },
   notice: { marginTop: 18, padding: 12, borderRadius: 10, background: "#eef5f7", color: "#214d5f", fontSize: 13, lineHeight: 1.45 },
 };
