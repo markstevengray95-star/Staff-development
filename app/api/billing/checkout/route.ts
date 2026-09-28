@@ -20,6 +20,17 @@ const priceEnv: Record<string, string> = {
   all_cpd: "STRIPE_PRICE_ALL_CPD",
 };
 
+// Stripe Price IDs are public identifiers. Environment variables can override these
+// without requiring a code change, while the Stripe secret always remains server-only.
+const livePriceFallbacks: Record<string, string> = {
+  plus: "price_1UKlYwJz8aAWdovWAY7kmz9C",
+  pro: "price_1UKlZ3Jz8aAWdovWNYOXqBLL",
+  school: "price_1UKlZAJz8aAWdovWtxtagH2k",
+  seat_5: "price_1UKlZEJz8aAWdovWOiklOQUj",
+  single_cpd: "price_1UKlZNJz8aAWdovWrdOoBIKD",
+  all_cpd: "price_1UKlZVJz8aAWdovWjrwQzJGz",
+};
+
 export async function POST(request: Request) {
   try {
     const authorization = request.headers.get("authorization") || "";
@@ -71,10 +82,12 @@ export async function POST(request: Request) {
     }
 
     const stripeSecret = process.env.STRIPE_SECRET_KEY;
-    const priceId = process.env[priceEnv[priceKey] || ""];
-    if (!stripeSecret || !priceId) {
-      return Response.json({ error: "Stripe is connected in the app, but this deployment still needs its Stripe secret and price IDs configured." }, { status: 503 });
+    const configuredPrice = process.env[priceEnv[priceKey] || ""];
+    const priceId = configuredPrice || livePriceFallbacks[priceKey];
+    if (!stripeSecret) {
+      return Response.json({ error: "Stripe checkout is ready, but this Vercel deployment still needs STRIPE_SECRET_KEY configured." }, { status: 503 });
     }
+    if (!priceId) return Response.json({ error: "No Stripe price is configured for that product." }, { status: 503 });
 
     const origin = new URL(request.url).origin;
     const params = new URLSearchParams();
@@ -83,14 +96,15 @@ export async function POST(request: Request) {
     params.set("line_items[0][quantity]", "1");
     params.set("success_url", `${origin}/?billing=success`);
     params.set("cancel_url", `${origin}/?billing=cancelled`);
-    params.set("client_reference_id", auth.user.id);
+    params.set("client_reference_id", `sd|${auth.user.id}|${organizationId || ""}|${body.courseId || ""}`);
     if (auth.user.email) params.set("customer_email", auth.user.email);
     params.set("allow_promotion_codes", "true");
 
     const metadata: Record<string, string> = {
+      app: "staff-development",
       user_id: auth.user.id,
       kind,
-      product: priceKey,
+      product_code: priceKey,
     };
     if (organizationId) metadata.organization_id = organizationId;
     if (body.courseId) metadata.course_id = body.courseId;
