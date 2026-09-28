@@ -4,6 +4,7 @@ import AppShellEnhancements from "teaching-cpd/app/components/AppShellEnhancemen
 import CoursePresentationController from "teaching-cpd/app/components/CoursePresentationController";
 import CourseDeepLinkController from "teaching-cpd/app/components/CourseDeepLinkController";
 import CourseInteractivityController from "teaching-cpd/app/components/CourseInteractivityController";
+import CpdZonesShortcuts from "../components/CpdZonesShortcuts";
 import "teaching-cpd/app/globals.css";
 import "teaching-cpd/app/mobile.css";
 import "teaching-cpd/app/phase2.css";
@@ -55,6 +56,7 @@ export default function CpdLayout({ children }: { children: ReactNode }) {
     <CoursePresentationController />
     <CourseDeepLinkController />
     <CourseInteractivityController />
+    <CpdZonesShortcuts />
     <div id="main-content">{children}</div>
     <DevelopmentDock />
   </>;
