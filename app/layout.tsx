@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import CloudSyncGate from "./components/CloudSyncGate";
 import CpdNavigationBridge from "./components/CpdNavigationBridge";
 import ZonesQuickAccess from "./components/ZonesQuickAccess";
+import ZonesSidebarBridge from "./components/ZonesSidebarBridge";
 import "./globals.css";
 import "./zones-experience.css";
 
@@ -16,6 +17,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body>
         <CpdNavigationBridge />
         <ZonesQuickAccess />
+        <ZonesSidebarBridge />
         <CloudSyncGate>{children}</CloudSyncGate>
       </body>
     </html>
