@@ -61,8 +61,28 @@ export default function SetupSchoolPage() {
         updated_at: new Date().toISOString(),
       });
 
-      const requested = new URLSearchParams(window.location.search).get("plan");
-      window.location.replace(requested ? `/?buy=${encodeURIComponent(requested)}` : "/");
+      const requested = new URLSearchParams(window.location.search).get("plan")?.toLowerCase();
+      if (requested && ["plus", "pro", "school"].includes(requested)) {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const token = sessionData.session?.access_token;
+        if (!token) throw new Error("Your sign-in session expired. Sign in again before checkout.");
+
+        const response = await fetch("/api/billing/checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ kind: "plan", product: requested, organizationId: org.id }),
+        });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok || !payload.url) {
+          setMessage(payload.error || "Your school workspace was created, but checkout could not start. You can retry from Plans & Access.");
+          setBusy(false);
+          return;
+        }
+        window.location.assign(payload.url);
+        return;
+      }
+
+      window.location.replace("/");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Unable to create the school workspace.");
       setBusy(false);
