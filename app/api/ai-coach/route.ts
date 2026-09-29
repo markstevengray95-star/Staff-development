@@ -1,1 +1,3 @@
-export { POST, runtime } from "teaching-cpd/app/api/ai-coach/route";
+export { POST } from "teaching-cpd/app/api/ai-coach/route";
+
+export const runtime = "nodejs";
