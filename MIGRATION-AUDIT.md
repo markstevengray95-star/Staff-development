@@ -2,154 +2,118 @@
 
 Audit date: 2026-09-29
 
-Source snapshots used for the migration audit:
+Source snapshots currently integrated:
 - `markstevengray95-star/zones` — `c1c50e9a0a7de5ae615ab2d37536769205aea074`
-- `markstevengray95-star/teaching-cpd` — `59ff1055ca725733451fe46fda4ab86ae7f7106d`
+- `markstevengray95-star/teaching-cpd` — `8ba4d7322c4d9a5963f0952c7d53aa646f8d9979`
 - Target: `markstevengray95-star/Staff-development`
 
 ## Migration rule
 
-The goal is **functional completeness**, not copying obsolete duplicate files. The Zones repository contains many versioned replacements of the same tool. The current active feature set is migrated once into the unified app. Old password gates, owner setup flows and obsolete Supabase endpoints are intentionally replaced by the unified Staff Development authentication connected to the dedicated CPD Supabase project.
+The target is functional completeness, not byte-for-byte copying of superseded source files. Obsolete password gates, duplicate historic Zones versions, old static service-worker plumbing and the old hard-coded backend are deliberately replaced by the unified Next.js/Vercel app, dedicated CPD Supabase project and unified authentication.
 
-## Teaching CPD route audit
+## Core CPD route coverage
 
-Every functional route in `teaching-cpd` is exposed in Staff Development either as a direct bridge/re-export or a unified replacement:
+The following source capabilities are exposed in Staff Development either through a direct route bridge or a unified replacement:
 
-| Source route | Target status |
-|---|---|
-| `/access` | migrated |
-| `/accessibility` | migrated |
-| `/actions` | migrated |
-| `/adaptive` | migrated |
-| `/admin-login` | migrated / unified admin sign-in |
-| `/admin` | migrated / unified admin centre |
-| `/ai-coach` | migrated · conversational AI-assisted CPD Coach with Smart Coach fallback |
-| `/auth` | replaced by Staff Development unified auth |
-| `/builder` | migrated |
-| `/certificates` | migrated |
-| `/coach` | migrated · evidence-aware recommendation plan |
-| `/coaching` | migrated |
-| `/course-audit` | migrated · Phases 1–8 automated course/content/presentation/practice/mastery/follow-through/facilitation audit |
-| `/course-quality-dashboard` | migrated · Phase 8 final QA dashboard |
-| `/course-packs` | migrated |
-| `/course-studio` | migrated |
-| `/custom/[slug]` | migrated |
-| `/department-cpd` | migrated |
-| `/development` | migrated |
-| `/external-cpd` | migrated |
-| `/facilitator` | migrated · Phase 7 printable facilitator packs and timed routes |
-| `/help` | migrated |
-| `/impact` | migrated · Phase 6 7/30/90-day implementation and impact cycle |
-| `/improvement` | migrated |
-| `/improvement/programmes` | migrated · school-improvement priority → CPD programme builder |
-| `/join/[code]` | migrated |
-| `/launch-readiness` | migrated |
-| `/leadership` | migrated |
-| `/learning-walks` | migrated · mobile learning walks and aggregate development patterns |
-| `/live` | migrated |
-| `/live-presenter` | migrated · Live CPD Presenter Mode 2.0 |
-| `/micro-cpd` | migrated |
-| `/needs-audit` | migrated |
-| `/offline` | migrated |
-| `/organisation` | migrated |
-| `/owner-login` | migrated/redirected into unified owner/admin access |
-| `/owner-portal` | migrated/redirected into unified owner/admin access |
-| `/pathways` | migrated |
-| `/pathways/personal` | migrated · role- and goal-based personalised pathway builder |
-| `/platform` | migrated |
-| `/policy-training` | migrated |
-| `/portfolio` | migrated |
-| `/quality` | migrated |
-| `/reading` | migrated |
-| `/recommendations` | migrated |
-| `/reminders` | migrated |
-| `/reset-password` | replaced by Staff Development CPD-project reset flow |
-| `/safeguarding` | migrated |
-| `/safeguarding/documents` | migrated |
-| `/safety` | migrated |
-| `/school-access` | migrated |
-| `/school-hub` | migrated |
-| `/simulator` | migrated |
-| `/staff-access` | migrated |
-| `/staff-sync` | migrated |
-| `/standards` | migrated |
-| `/subject-cpd` | migrated |
-| `/training` | migrated |
-| `/verify` | migrated |
-
-The complete source CPD catalogue, course expansion data, interactive course engine, presentations, reading expansions, simulations, certificates, pathways, recommendations, safeguarding depth and school-course batches remain available through the exact pinned `teaching-cpd` commit and target bridge routes.
+- `/dashboard` — unified personal staff-development dashboard.
+- `/knowledge-base` — school knowledge library with private sources and Gemini Q&A.
+- `/ai-course-builder` — Gemini course generator that writes into the existing versioned Course Creator.
+- `/ai-coach` — Gemini-first conversational CPD Coach with evidence-aware local fallback.
+- `/learning-walks` — mobile learning-walk capture with aggregate development patterns, not staff ranking.
+- `/pathways/personal` — role/goal-based personalised development pathway.
+- `/improvement/programmes` — school-improvement priority → CPD programme builder.
+- `/live-presenter` — Live CPD Presenter Mode 2.0.
+- `/facilitator` — Phase 7 printable facilitator packs and timed routes.
+- `/impact` — Phase 6 7/30/90-day implementation and impact cycle.
+- `/course-audit` — automated Phases 1–8 course-quality audit.
+- `/course-quality-dashboard` — Phase 8 final QA dashboard.
+- `/builder` — visual versioned school Course Creator.
+- `/custom/[slug]` — published school-created CPD courses.
+- `/development`, `/pathways`, `/adaptive`, `/subject-cpd`, `/reading`, `/micro-cpd`, `/training`, `/recommendations` — staff learning/development tools.
+- `/simulator`, `/actions`, `/coach`, `/coaching`, `/needs-audit`, `/portfolio`, `/standards`, `/external-cpd` — application and evidence tools.
+- `/school-hub`, `/department-cpd`, `/leadership`, `/live`, `/policy-training`, `/quality`, `/school-access`, `/staff-access`, `/staff-sync` — school/leadership tools.
+- `/safeguarding`, `/safeguarding/documents`, `/safety`, `/certificates`, `/reminders`, `/improvement` — compliance/follow-up tools.
+- `/course-studio`, `/course-packs`, `/help`, `/accessibility`, `/launch-readiness`, `/admin`, `/admin-login`, `/platform`, `/owner-portal` — creation, administration and platform tools.
+- `/auth` and `/reset-password` — intentionally replaced by Staff Development's dedicated CPD-project auth flow.
 
 ## Course improvement phases
 
-**Phase 1 — standardisation.** The full catalogue uses the shared course-quality template and automated baseline audit while retaining bespoke batch QA.
+**Phase 1 — standardisation.** Shared quality template and automated baseline audit.
 
-**Phase 2 — content depth.** Every course gains connected core knowledge, misconceptions/non-examples, worked application, SEND/EAL access and evidence/implementation follow-through, with a substantive-knowledge build threshold.
+**Phase 2 — content depth.** Connected core knowledge, misconceptions/non-examples, worked application, SEND/EAL access and evidence/implementation follow-through.
 
-**Phase 3 — presentations.** Every course receives presentation-first delivery, visual section dividers, worked examples, recap, pacing breaks, presenter notes, fullscreen delivery, timers and keyboard controls.
+**Phase 3 — presentations.** Presentation-first delivery, visual dividers, worked examples, recap, pacing breaks, presenter notes, fullscreen and timing controls.
 
-**Phase 4 — advanced practice.** Every course contains six higher-order practice environments: evidence sorting, response ranking, hotspot investigation, implementation-vs-impact analysis, branching professional cases and an implementation simulator.
+**Phase 4 — advanced practice.** Evidence sorting, response ranking, hotspot investigation, implementation-vs-impact analysis, branching cases and implementation simulation.
 
-**Phase 5 — mastery assessment.** Every course contains diagnostic baseline, rotating retrieval, scenario application, final mastery and demonstrated-application gates, with targeted reteach and cloud-saved attempt evidence.
+**Phase 5 — mastery.** Diagnostic baseline, rotating retrieval, scenario application, final mastery and demonstrated-application gates with targeted reteach.
 
-**Phase 6 — implementation and impact.** Completed courses create 7-day transfer, 30-day impact and 90-day sustain reviews, with spaced retrieval, implementation status, private evidence upload and privacy-protected aggregate leadership reporting.
+**Phase 6 — implementation and impact.** 7-day transfer, 30-day impact and 90-day sustain reviews with spaced retrieval, evidence and implementation status.
 
-**Phase 7 — facilitator delivery.** Every course has validated 15, 30, 60 and 90-minute live routes, facilitator notes, route pacing, discussion timer, display accessibility controls, route-aware navigation and printable `/facilitator` packs. Every route must include substantive learning, interaction and transfer and total exactly the selected session time.
+**Phase 7 — facilitator delivery.** Validated 15/30/60/90-minute live routes, presenter guidance, accessibility controls and printable packs.
 
-**Phase 8 — final QA.** Every course passes a build-blocking quality gate covering unique IDs, presentation opening and pacing, unfinished editorial copy, Phase 4 practice, Phase 5 mastery, Phase 6 follow-through, Phase 7 route integrity and readable/meaningful visual and interactive content. Advisory checks flag weak objectives, interaction density, repeated slide titles and unclear summaries. Results are visible at `/course-quality-dashboard`.
+**Phase 8 — final QA.** Build-blocking checks for IDs, unfinished copy, presentation pacing, practice, mastery, follow-through, facilitator routes and accessible interactive/visual content.
 
 ## Five-feature Staff Development expansion
 
-The five high-value post-Phase-8 features are now part of the unified product rather than separate demos:
+### AI CPD Coach — `/ai-coach`
+- Gemini is the primary model when `GEMINI_API_KEY` is available.
+- OpenAI remains an optional fallback if configured.
+- The built-in Smart Coach remains usable when no external model is available.
+- Uses CPD history, targets, implementation actions, assignments and needs-audit context.
+- Does not rank individual staff and warns against entering identifiable pupil/personnel information.
 
-### 1. AI CPD Coach — `/ai-coach`
-- Uses the staff member's completed CPD, active development targets, implementation actions, assignments and needs-audit context.
-- Supports a conversational coaching workspace and saved coaching conversations.
-- An optional server-side model call is used when `OPENAI_API_KEY` is configured. Without it, the evidence-aware Smart Coach fallback remains fully usable.
-- The interface warns staff not to enter identifiable pupil information, safeguarding disclosures or confidential personnel information.
-- It supports professional judgement and implementation planning; it does not score or rank staff.
+### Learning Walks — `/learning-walks`
+- Captures observable evidence, strengths, development points and improvement links.
+- Recommends relevant CPD.
+- Leadership sees aggregate development patterns rather than teacher league tables.
 
-### 2. Learning Walks — `/learning-walks`
-- Mobile-first capture of observable evidence, strengths, development points and school improvement links.
-- Automatically recommends relevant CPD from the existing catalogue.
-- Captures development signals such as checking for understanding, challenge, participation, independence, behaviour/climate, SEND access, retrieval, feedback and literacy/oracy.
-- The form deliberately does not collect an observed teacher name or quality score.
-- Leadership sees shared aggregate patterns rather than an individual staff leaderboard.
+### Personal Development Pathways — `/pathways/personal`
+- Uses role, professional goal and completed learning.
+- Saves focused course sequences with rationales and target completion dates.
 
-### 3. Personal Development Pathways — `/pathways/personal`
-- Builds a focused pathway from staff role, professional-development goal and already-completed learning.
-- Supports ECT, Teacher, TA, Pastoral, Middle Leader, SLT, SEND and Safeguarding role focuses.
-- Produces a course sequence with rationales and stores saved plans in the staff member's account.
-- Complements the existing curated `/pathways` rather than replacing them.
+### School Improvement → CPD — `/improvement/programmes`
+- Links live improvement priorities to selected courses/pathways, facilitator routes, review days and explicit success measures.
 
-### 4. School Improvement → CPD — `/improvement/programmes`
-- CPD Leads/Admins select a live school or department improvement priority.
-- The system suggests relevant courses, while the leader retains the final selection decision.
-- Programmes can include existing pathways, 15/30/60/90-minute facilitator routes and the Phase 6 7/30/90-day review cycle.
-- Every programme includes a success measure so impact can be reviewed rather than inferred from attendance alone.
+### Presenter 2.0 — `/live-presenter`
+- Reuses existing secure live sessions, QR codes, participants and responses.
+- Adds slide control, polls, confidence pulses, word clouds, anonymous questions and facilitator-controlled result reveal.
 
-### 5. Live CPD Presenter Mode 2.0 — `/live-presenter`
-- Uses the existing secure Live CPD sessions, QR join codes, participants, activities and responses.
-- Adds course-slide control, direct slide navigation and persisted presenter state.
-- Adds live poll, confidence pulse, word cloud and anonymous-question tools.
-- Results remain facilitator-controlled rather than automatically displayed.
-- Presenter 2.0 sits alongside `/live` and `/facilitator`; it does not create a competing live-session system.
+## Three-feature AI/platform expansion
 
-### Data and security for the five-feature suite
+### School Knowledge Base + Gemini — `/knowledge-base`
+- Stores approved school policy/guidance text by organisation.
+- Supports pasted text and private PDF/DOCX/TXT/Markdown uploads.
+- Original uploaded files are stored in the private `school-knowledge` bucket.
+- Gemini extracts/summarises supported documents and Q&A answers are grounded in retrieved school sources with numbered citations.
+- School-specific questions never fall back to invented policy requirements; where evidence is insufficient the assistant says so.
+- Read access is organisation-scoped. Upload/archive access is restricted to authorised leaders.
 
-The dedicated CPD Supabase project now contains:
-- `cpd_coach_conversations`
-- `personal_pathway_plans`
-- `learning_walks`
-- `improvement_cpd_programmes`
-- `live_presenter_state`
+### Gemini AI Course Builder — `/ai-course-builder`
+- CPD Lead/Admin only.
+- Builds a complete Phase 1–8-style CPD draft from a topic, audience, duration, level and optional school knowledge sources.
+- Produces substantive text, diagnostic/retrieval quizzes, scenarios, polls, reflection and action-planning blocks.
+- Saves directly into existing `custom_courses`, `custom_course_versions` and `custom_course_blocks` tables.
+- Drafts are never auto-published; leaders review/edit/version them through `/builder` before publishing.
 
-RLS is enabled on all five tables. Personal coach/pathway records are owner-scoped, learning-walk leadership access is limited to shared aggregate records in the same organisation, improvement programmes are managed by authorised CPD Leads/Admins, and presenter state is writable only by the session presenter. These features reuse existing CPD progress, live-session and impact systems rather than duplicating them.
+### Unified Staff Development Dashboard — `/dashboard`
+- Brings completed CPD, assigned CPD, active development targets, personalised pathway, Phase 6 follow-ups and recent evidence into one workspace.
+- Computes a practical next action from due impact reviews, assignments, pathway progress and development targets.
+- Links directly to AI Coach, School Knowledge, Personal Pathways, Action Plans, Training, Portfolio and Impact Review.
 
-## Zones route / capability audit
+## Data/security added for AI/platform expansion
+
+The dedicated CPD Supabase project contains `school_knowledge_documents` with RLS enabled. Staff can read only knowledge for their organisation; inserts/updates/deletes are restricted to organisation leadership roles. The private `school-knowledge` storage bucket applies equivalent organisation-scoped read and leader-write/delete policies. Full-text search runs through `search_school_knowledge(...)` under the caller's RLS context.
+
+AI-generated school courses deliberately reuse the existing organisation-scoped custom course/version/block tables and their existing RLS instead of creating a parallel publishing system.
+
+Server-side Gemini calls use `GEMINI_API_KEY` (or supported Google key aliases) and never expose the key to browser code. The current default model can be overridden with `GEMINI_COACH_MODEL` / `GEMINI_MODEL`.
+
+## Zones coverage
 
 | Original area | Target |
 |---|---|
-| Dashboard | `/zones` plus main dashboard |
+| Dashboard | `/zones` plus unified home |
 | Student Check-in | main platform Student Support |
 | Regulation Room | `/regulation-room` |
 | Scenario Practice | main Zones Practice + `/zone-quest` |
@@ -164,60 +128,19 @@ RLS is enabled on all five tables. Personal coach/pathway records are owner-scop
 | CPD Studio | `/zones-cpd/studio` |
 | CPD Escape Room | `/zones-cpd/escape-room` |
 | Intervention Plans | main platform Interventions |
-| School Platform | `/zones-school` |
-| School Operations | `/zones-school` → School Operations |
-| About & Settings | `/zones-school` → About & Settings |
+| School Platform / Operations | `/zones-school` |
 
-## Zones specialist modules
-
-| Source capability | Target |
-|---|---|
-| `regulation-room-3d`, `regulation-room-v2`, `regulation-room-plus`, `regulation-room-v3-plus` | consolidated `/regulation-room` |
-| `cpd-deck-v5` | `/zones-cpd` facilitator deck |
-| `cpd-activity-lab-v6` | `/zones-cpd/studio` Activity Lab |
-| `cpd-facilitator-v6` | `/zones-cpd/studio` Facilitator Console |
-| `cpd-graph-lab-v7` | `/zones-cpd/studio` Graph & Evidence Lab |
-| `cpd-hotspot-realistic-v8` | `/zones-cpd/studio` Classroom Hotspot |
-| `cpd-extra-activities-v9` | Activity Lab / Zone Quest |
-| `cpd-session-deepdive-v10` | `/zones-cpd/studio` Session Deep Dive |
-| `cpd-textbook-v36` | `/zones-cpd/studio` Zones CPD Textbook |
-| `cpd-live-audience-v16` | `/zones-cpd/studio` Live Audience + `/live` |
-| `cpd-live-sync-manager-v37` | unified CPD Live backend |
-| `cpd-qr-resilient-v16` | QR entry in Zones CPD Studio |
-| `cpd-live-fun-v17` | Activity Lab / presenter widgets |
-| `cpd-delivery-v25b` | Facilitator Console / presenter tools |
-| `cpd-session3-inclusion-v28` | `/zones-cpd/studio` Inclusion Session |
-| `cpd-platform-v19` | `/zones-cpd` + `/zones-cpd/studio` |
-| `cpd-escape-room-v21/v22` | `/zones-cpd/escape-room` |
-| `cpd-interactive-challenges-v20` | Zone Quest / Activity Lab |
-| `cpd-collab-v21` | `/zones-cpd/studio` Team Collaboration + `/live` |
-| `cpd-escape-platform-v23` | Escape Room library/builder concepts in `/zones-cpd/escape-room` |
-| `cpd-escape-team-v23` | Escape Room team roles / Studio collaboration |
-| `cpd-escape-extras-v23` | Escape Room case tools |
-| `cpd-escape-reliability-v24` | consolidated Escape Room flow |
-| `whole-school-features-v11` | `/zones-school` |
-| `cpd-presenter-widgets-v28` | `/zones-cpd/studio` Presenter Widgets |
-| `cpd-live-unified-v30` | `/live` + Studio facilitator layer |
-| `cpd-live-focus-zone-v31b` | Studio / Zones live activities |
-| `cpd-zone-tab-v33` | `/zones` navigation |
-| `cpd-zone-quest-phone-v34` | `/zone-quest` responsive game |
-| `cpd-zone-link-v35` | unified Zones navigation |
-| `school-impact-v1` | `/zones-school` Impact Hub + `/impact` |
-| `operations-data.js` / `operations.js` | `/zones-school` School Operations |
-| `interventions-only.js` | main platform Interventions |
-| `platform-data.js` / `platform.js` | `/zones-school` + unified accounts/backend |
-| `enhancements.js` / `experience-plus.js` | folded into rebuilt Zones suite UI |
+Specialist legacy Zones modules for facilitator tools, graph/evidence lab, classroom hotspot, session deep dives, textbook, live audience, QR joining, collaborative/escape-room tools, Presenter Widgets and School Impact are consolidated into `/zones-cpd`, `/zones-cpd/studio`, `/zones-cpd/escape-room`, `/live`, `/zone-quest`, `/zones-school` and `/impact` rather than retained as duplicate versioned scripts.
 
 ## Intentionally replaced rather than copied
 
-- `password-gate-v42/v43/v44` → unified CPD-project authentication.
-- `cpd-admin-passwords-v42/v43/v44`, `cpd-owner-setup-v40` and old admin auth helpers → unified `/admin-login` and `/admin`.
-- Old Zones hard-coded Supabase URL `emjmvgginijkupwuflla` → **not migrated into executable source**. Staff Development uses the dedicated CPD Supabase project.
-- Superseded duplicate Regulation Room / Escape Room versions → consolidated latest capability set.
-- Standalone static service-worker/cache plumbing → replaced by the Next.js/Vercel architecture.
+- Legacy Zones password gates and owner/admin password scripts → unified Staff Development authentication/admin.
+- Old hard-coded Supabase project `emjmvgginijkupwuflla` → not allowed in executable Staff Development source.
+- Superseded duplicate Regulation Room / Escape Room versions → consolidated current experiences.
+- Static service-worker/cache architecture → Next.js/Vercel deployment architecture.
 
 ## Continuous platform integrity check
 
-`npm run audit:platform` is part of Staff Development CI before the production build. It fails the pipeline if a critical migrated route disappears, if duplicate route outputs are introduced, if the `teaching-cpd` package is not pinned to an exact commit, or if the obsolete backend reappears in executable source. The five new routes are now part of the required-route list. Literal unresolved internal route references are reported as warnings for review.
+`npm run audit:platform` runs in Staff Development CI before the production build. It fails when a critical route disappears, duplicate route outputs appear, the `teaching-cpd` dependency is not pinned to an exact commit, required AI/API bridges disappear, or the obsolete backend reappears in executable source. Unresolved literal internal links are reported as warnings.
 
-When either source repository changes, compare its active route/script manifest with this document before declaring the combined platform complete. Any new functional source feature must either receive a target route/capability or be explicitly marked as superseded/replaced here.
+Current required additions include `/dashboard`, `/knowledge-base`, `/ai-course-builder`, `/ai-coach`, `/learning-walks`, `/pathways/personal`, `/improvement/programmes` and `/live-presenter`.
