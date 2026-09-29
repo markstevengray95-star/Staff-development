@@ -6,6 +6,8 @@ import {
   coursePracticeAudit as sourceCoursePracticeAudit,
   courseAssessmentAudit as sourceCourseAssessmentAudit,
   courseFollowThroughAudit as sourceCourseFollowThroughAudit,
+  getPhase6RetrievalQuestions as sourceGetPhase6RetrievalQuestions,
+  PHASE6_REVIEW_STAGES as sourcePhase6ReviewStages,
   COURSE_TEMPLATE_STAGES,
   COURSE_TEMPLATE_VERSION,
 } from "teaching-cpd/lib/catalogue";
@@ -23,6 +25,8 @@ export const coursePresentationAudit = sourceCoursePresentationAudit;
 export const coursePracticeAudit = sourceCoursePracticeAudit;
 export const courseAssessmentAudit = sourceCourseAssessmentAudit;
 export const courseFollowThroughAudit = sourceCourseFollowThroughAudit;
+export const getPhase6RetrievalQuestions = sourceGetPhase6RetrievalQuestions;
+export const PHASE6_REVIEW_STAGES = sourcePhase6ReviewStages;
 export type { Role, CourseCategory };
 export type Module = CourseModule;
 
