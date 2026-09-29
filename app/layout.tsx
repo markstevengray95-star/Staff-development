@@ -3,6 +3,7 @@ import CoursePresentationController from "teaching-cpd/app/components/CoursePres
 import CoursePresenterPhase3Controller from "teaching-cpd/app/components/CoursePresenterPhase3Controller";
 import CoursePracticePhase4Controller from "teaching-cpd/app/components/CoursePracticePhase4Controller";
 import CourseAssessmentPhase5Controller from "teaching-cpd/app/components/CourseAssessmentPhase5Controller";
+import CourseFollowThroughPhase6Controller from "teaching-cpd/app/components/CourseFollowThroughPhase6Controller";
 import CourseInteractivityController from "teaching-cpd/app/components/CourseInteractivityController";
 import AccessGate from "./components/AccessGate";
 import CpdNavigationBridge from "./components/CpdNavigationBridge";
@@ -16,6 +17,8 @@ import "teaching-cpd/app/course-slide-formatting.css";
 import "teaching-cpd/app/phase3-presentation.css";
 import "teaching-cpd/app/course-practice-phase4.css";
 import "teaching-cpd/app/phase5-assessment.css";
+import "teaching-cpd/app/course-followthrough-phase6.css";
+import "teaching-cpd/app/impact.css";
 
 export const metadata: Metadata = {
   title: "Staff Development | Whole-School Learning & Regulation",
@@ -31,6 +34,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <CoursePracticePhase4Controller />
         <CourseAssessmentPhase5Controller />
         <CourseAssessmentPhase5Sync />
+        <CourseFollowThroughPhase6Controller />
         <CourseInteractivityController />
         <CpdNavigationBridge />
         <ZonesQuickAccess />
