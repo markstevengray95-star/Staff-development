@@ -23,6 +23,7 @@ import "teaching-cpd/app/phase5-assessment.css";
 import "teaching-cpd/app/course-followthrough-phase6.css";
 import "teaching-cpd/app/phase7-facilitator.css";
 import "teaching-cpd/app/five-feature-suite.css";
+import "teaching-cpd/app/ai-platform.css";
 import "teaching-cpd/app/impact.css";
 
 export const metadata: Metadata = {
