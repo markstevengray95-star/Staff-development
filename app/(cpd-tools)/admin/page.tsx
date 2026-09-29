@@ -54,10 +54,11 @@ export default function UnifiedAdminPage() {
       const client = getSupabaseBrowserClient();
       const { data: auth } = await client.auth.getUser();
       if (!auth.user) { window.location.replace("/auth?next=/admin"); return; }
+      const trustedAdminClaim = auth.user.app_metadata?.platform_admin === true || auth.user.app_metadata?.zones_role === "admin";
       const { data: me, error } = await client.from("staff_development_profiles").select("display_name,platform_role").eq("user_id", auth.user.id).single();
       if (!active) return;
-      if (error || me?.platform_role !== "admin") { setLoading(false); setAllowed(false); return; }
-      setAllowed(true); setName(me.display_name || "Platform Admin");
+      if (!trustedAdminClaim && (error || me?.platform_role !== "admin")) { setLoading(false); setAllowed(false); return; }
+      setAllowed(true); setName(me?.display_name || auth.user.email?.split("@")[0] || "Platform Admin");
       const { data, error: usersError } = await client.from("staff_development_profiles").select("user_id,display_name,username,department,platform_role").order("display_name");
       if (usersError) setMessage(usersError.message); else setUsers((data || []) as UserRow[]);
       setLoading(false);
