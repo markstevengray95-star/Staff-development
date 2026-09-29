@@ -16,5 +16,7 @@ jobs:
           node-version: 22
       - name: Install dependencies
         run: npm install
+      - name: Audit routes and migration integrity
+        run: npm run audit:platform
       - name: Build application
         run: npm run build
