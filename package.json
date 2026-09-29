@@ -13,7 +13,7 @@
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-qr-code": "2.2.0",
-    "teaching-cpd": "github:markstevengray95-star/teaching-cpd#16acfbe03b605cf99ad7692a5f876fa83c6f3d90"
+    "teaching-cpd": "github:markstevengray95-star/teaching-cpd#00aba0dade58410cdfbca00887c595d5bf4a5a2c"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
