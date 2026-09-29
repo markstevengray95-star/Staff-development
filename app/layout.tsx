@@ -11,8 +11,10 @@ import CpdNavigationBridge from "./components/CpdNavigationBridge";
 import ZonesQuickAccess from "./components/ZonesQuickAccess";
 import ZonesSidebarBridge from "./components/ZonesSidebarBridge";
 import CourseAssessmentPhase5Sync from "./components/CourseAssessmentPhase5Sync";
+import DevelopmentFeatureNav from "./components/DevelopmentFeatureNav";
 import "./globals.css";
 import "./zones-experience.css";
+import "./development-feature-nav.css";
 import "teaching-cpd/app/course-presentation-player.css";
 import "teaching-cpd/app/course-slide-formatting.css";
 import "teaching-cpd/app/phase3-presentation.css";
@@ -20,6 +22,7 @@ import "teaching-cpd/app/course-practice-phase4.css";
 import "teaching-cpd/app/phase5-assessment.css";
 import "teaching-cpd/app/course-followthrough-phase6.css";
 import "teaching-cpd/app/phase7-facilitator.css";
+import "teaching-cpd/app/five-feature-suite.css";
 import "teaching-cpd/app/impact.css";
 
 export const metadata: Metadata = {
@@ -40,6 +43,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <CourseFacilitatorPhase7Controller />
         <CourseInteractivityController />
         <CpdNavigationBridge />
+        <DevelopmentFeatureNav />
         <ZonesQuickAccess />
         <ZonesSidebarBridge />
         <AccessGate>{children}</AccessGate>
