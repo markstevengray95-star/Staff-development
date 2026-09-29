@@ -15,6 +15,7 @@ import DevelopmentFeatureNav from "./components/DevelopmentFeatureNav";
 import "./globals.css";
 import "./zones-experience.css";
 import "./development-feature-nav.css";
+import "./school-workflows.css";
 import "teaching-cpd/app/course-presentation-player.css";
 import "teaching-cpd/app/course-slide-formatting.css";
 import "teaching-cpd/app/phase3-presentation.css";
