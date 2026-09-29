@@ -41,10 +41,10 @@ if (duplicateRoutes.length) failures.push(`Duplicate Next.js route outputs: ${[.
 const requiredRoutes = [
   "/", "/auth", "/reset-password", "/admin", "/admin-login",
   "/cpd", "/course-audit", "/course-quality-dashboard", "/facilitator", "/impact",
-  "/development", "/pathways", "/adaptive", "/subject-cpd", "/reading", "/micro-cpd", "/training", "/recommendations",
-  "/simulator", "/actions", "/coach", "/coaching", "/needs-audit", "/portfolio", "/standards", "/external-cpd",
-  "/school-hub", "/safeguarding", "/safeguarding/documents", "/safety", "/certificates", "/reminders", "/improvement",
-  "/department-cpd", "/leadership", "/live", "/course-studio", "/course-packs", "/help", "/accessibility",
+  "/development", "/pathways", "/pathways/personal", "/adaptive", "/subject-cpd", "/reading", "/micro-cpd", "/training", "/recommendations",
+  "/simulator", "/actions", "/coach", "/ai-coach", "/coaching", "/needs-audit", "/portfolio", "/standards", "/external-cpd",
+  "/school-hub", "/learning-walks", "/safeguarding", "/safeguarding/documents", "/safety", "/certificates", "/reminders", "/improvement", "/improvement/programmes",
+  "/department-cpd", "/leadership", "/live", "/live-presenter", "/course-studio", "/course-packs", "/help", "/accessibility",
   "/policy-training", "/builder", "/launch-readiness", "/school-access", "/quality", "/staff-access", "/staff-sync", "/platform", "/owner-portal",
   "/zones", "/regulation-room", "/zones-cpd", "/zones-cpd/studio", "/zones-cpd/escape-room", "/zone-quest", "/zones-school"
 ];
@@ -92,7 +92,7 @@ const migrationAudit = path.join(root, "MIGRATION-AUDIT.md");
 if (!fs.existsSync(migrationAudit)) failures.push("MIGRATION-AUDIT.md is missing");
 else {
   const text = fs.readFileSync(migrationAudit, "utf8");
-  for (const phrase of ["Phase 8", "/facilitator", "/zones-cpd/studio", "/zones-school"]) {
+  for (const phrase of ["Phase 8", "/facilitator", "/zones-cpd/studio", "/zones-school", "/ai-coach", "/learning-walks", "/pathways/personal", "/improvement/programmes", "/live-presenter"]) {
     if (!text.includes(phrase)) warnings.push(`Migration audit does not yet mention ${phrase}`);
   }
 }
