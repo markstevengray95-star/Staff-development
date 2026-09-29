@@ -3,9 +3,11 @@
 import { FormEvent, useEffect, useState } from "react";
 import { getSupabaseBrowserClient, getSupabasePublicConfig } from "@/lib/supabase";
 
-type Mode = "signin" | "signup" | "admin";
+type Mode = "signin" | "signup";
 type SignInMethod = "username" | "email";
 type SessionPayload = { access_token: string; refresh_token: string; error?: string };
+
+const STAFF_DEVELOPMENT_ORIGIN = "https://schoolcpd.vercel.app";
 
 export default function AuthPage() {
   const [mode, setMode] = useState<Mode>("signin");
@@ -14,7 +16,6 @@ export default function AuthPage() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [setupCode, setSetupCode] = useState("");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -33,19 +34,6 @@ export default function AuthPage() {
     setBusy(true);
     setMessage("");
     try {
-      if (mode === "admin") {
-        const session = await callPublicFunction("bootstrap-admin", {
-          code: setupCode.trim(),
-          username: normaliseUsername(username || "zonesadmin"),
-          email: email.trim(),
-          password,
-          displayName: name.trim() || "Platform Admin",
-        });
-        await applySession(session);
-        window.location.replace("/cpd");
-        return;
-      }
-
       if (mode === "signin") {
         if (signInMethod === "username") {
           const session = await callPublicFunction("username-login", {
@@ -68,7 +56,7 @@ export default function AuthPage() {
         password,
         options: {
           data: { full_name: name.trim(), username: cleanUsername },
-          emailRedirectTo: `${window.location.origin}/auth?next=${encodeURIComponent(nextPath())}`,
+          emailRedirectTo: `${STAFF_DEVELOPMENT_ORIGIN}/auth`,
         },
       });
       if (error) throw error;
@@ -109,7 +97,7 @@ export default function AuthPage() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${window.location.origin}/auth?next=${encodeURIComponent(nextPath())}`,
+        redirectTo: `${STAFF_DEVELOPMENT_ORIGIN}/auth`,
         ...(provider === "azure" ? { scopes: "email" } : {}),
       },
     });
@@ -128,10 +116,10 @@ export default function AuthPage() {
     setBusy(true);
     const { error } = await supabase.auth.signInWithOtp({
       email: email.trim(),
-      options: { emailRedirectTo: `${window.location.origin}/auth?next=${encodeURIComponent(nextPath())}` },
+      options: { emailRedirectTo: `${STAFF_DEVELOPMENT_ORIGIN}/auth` },
     });
     setBusy(false);
-    setMessage(error ? error.message : "Sign-in link sent. Open it from your email to continue.");
+    setMessage(error ? error.message : "Sign-in link sent. Open it from your email to continue in Staff Development.");
   }
 
   async function resetPassword() {
@@ -142,43 +130,46 @@ export default function AuthPage() {
     const supabase = getSupabaseBrowserClient();
     setBusy(true);
     const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo: `${window.location.origin}/reset-password`,
+      redirectTo: `${STAFF_DEVELOPMENT_ORIGIN}/reset-password`,
     });
     setBusy(false);
-    setMessage(error ? error.message : "Password reset email sent.");
+    setMessage(error ? error.message : "Password reset email sent. The reset link will return to Staff Development, not the tutoring app.");
   }
 
   function chooseMode(next: Mode) {
     setMode(next);
     setMessage("");
     setPassword("");
-    if (next === "admin" && !username) setUsername("zonesadmin");
   }
 
-  const heading = mode === "signin" ? "Welcome back" : mode === "signup" ? "Create your Staff Development account" : "Activate platform admin";
+  function selectAdminLogin() {
+    setMode("signin");
+    setSignInMethod("username");
+    setUsername("zonesadmin");
+    setPassword("");
+    setMessage("Platform admin selected. Sign in with your CPD account password, or use email password reset if needed.");
+  }
 
   return <main style={styles.page}>
     <section style={styles.hero}>
       <span style={styles.eyebrow}>STAFF DEVELOPMENT</span>
       <h1 style={styles.heroTitle}>One account for CPD, regulation and whole-school support.</h1>
-      <p style={styles.heroText}>Use a memorable username and password, or continue with your school account. Progress and school access stay connected to the same secure account.</p>
+      <p style={styles.heroText}>Staff Development now uses its dedicated CPD Supabase project. Its accounts, password resets and saved CPD data are separate from your tutoring app.</p>
       <div style={styles.featureGrid}>
-        <Feature title="Simple sign-in" text="Use a username and password without entering an email each time." />
-        <Feature title="Full CPD library" text="Open the complete professional learning catalogue from the same account." />
-        <Feature title="Protected admin" text="Platform administration uses a separate one-time activation process." />
+        <Feature title="Separate CPD account" text="Authentication and data stay inside the CPD Supabase project." />
+        <Feature title="Username sign-in" text="Use a memorable username and password without entering an email each time." />
+        <Feature title="Admin access" text="Your existing CPD administrator account has unrestricted platform access." />
       </div>
     </section>
 
     <section style={styles.card}>
-      <span style={styles.eyebrow}>{mode === "admin" ? "ADMIN SETUP" : mode === "signup" ? "CREATE ACCOUNT" : "SIGN IN"}</span>
-      <h2 style={{ margin: "8px 0 6px", fontSize: 28 }}>{heading}</h2>
-      <p style={styles.muted}>{mode === "admin" ? "Use the one-time setup code supplied by the platform owner. After activation, your admin username and password work like a normal sign-in." : "Username sign-in is the quickest option. Email, Google and Microsoft remain available too."}</p>
+      <span style={styles.eyebrow}>{mode === "signup" ? "CREATE ACCOUNT" : "SIGN IN"}</span>
+      <h2 style={{ margin: "8px 0 6px", fontSize: 28 }}>{mode === "signup" ? "Create your Staff Development account" : "Welcome back"}</h2>
+      <p style={styles.muted}>This login is connected only to the Staff Development / CPD Supabase project.</p>
 
-      {mode !== "admin" && <>
-        <button type="button" style={styles.provider} disabled={busy} onClick={() => oauth("google")}><b>G</b><span>Continue with Google</span></button>
-        <button type="button" style={styles.provider} disabled={busy} onClick={() => oauth("azure")}><b>▦</b><span>Continue with Microsoft</span></button>
-        <div style={styles.divider}><span>or use a password</span></div>
-      </>}
+      <button type="button" style={styles.provider} disabled={busy} onClick={() => oauth("google")}><b>G</b><span>Continue with Google</span></button>
+      <button type="button" style={styles.provider} disabled={busy} onClick={() => oauth("azure")}><b>▦</b><span>Continue with Microsoft</span></button>
+      <div style={styles.divider}><span>or use a password</span></div>
 
       {mode === "signin" && <div style={styles.segment}>
         <button type="button" style={signInMethod === "username" ? styles.segmentActive : styles.segmentButton} onClick={() => { setSignInMethod("username"); setMessage(""); }}>Username</button>
@@ -186,12 +177,11 @@ export default function AuthPage() {
       </div>}
 
       <form onSubmit={submit} style={{ display: "grid", gap: 14, marginTop: 16 }}>
-        {(mode === "signup" || mode === "admin") && <label style={styles.label}>Full name<input style={styles.input} required={mode === "signup"} value={name} onChange={(event) => setName(event.target.value)} autoComplete="name" /></label>}
-        {(mode !== "signin" || signInMethod === "username") && <label style={styles.label}>Username<input style={styles.input} required value={username} onChange={(event) => setUsername(normaliseUsername(event.target.value))} autoCapitalize="none" autoCorrect="off" autoComplete="username" placeholder={mode === "admin" ? "zonesadmin" : "e.g. mgray"} /></label>}
-        {(mode !== "signin" || signInMethod === "email") && <label style={styles.label}>Email<input style={styles.input} required type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} /></label>}
-        <label style={styles.label}>Password<input style={styles.input} required minLength={mode === "admin" ? 12 : 8} type="password" autoComplete={mode === "signin" ? "current-password" : "new-password"} value={password} onChange={(event) => setPassword(event.target.value)} /></label>
-        {mode === "admin" && <label style={styles.label}>One-time admin setup code<input style={styles.input} required value={setupCode} onChange={(event) => setSetupCode(event.target.value.toUpperCase())} autoComplete="off" placeholder="ADMIN-…" /></label>}
-        <button style={styles.primary} disabled={busy}>{busy ? "Please wait…" : mode === "signin" ? "Sign in" : mode === "signup" ? "Create account" : "Create admin account"}</button>
+        {mode === "signup" && <label style={styles.label}>Full name<input style={styles.input} required value={name} onChange={(event) => setName(event.target.value)} autoComplete="name" /></label>}
+        {(mode === "signup" || signInMethod === "username") && <label style={styles.label}>Username<input style={styles.input} required value={username} onChange={(event) => setUsername(normaliseUsername(event.target.value))} autoCapitalize="none" autoCorrect="off" autoComplete="username" placeholder="e.g. mgray" /></label>}
+        {(mode === "signup" || signInMethod === "email") && <label style={styles.label}>Email<input style={styles.input} required type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} /></label>}
+        <label style={styles.label}>Password<input style={styles.input} required minLength={8} type="password" autoComplete={mode === "signin" ? "current-password" : "new-password"} value={password} onChange={(event) => setPassword(event.target.value)} /></label>
+        <button style={styles.primary} disabled={busy}>{busy ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}</button>
       </form>
 
       {mode === "signin" && signInMethod === "email" && <div style={styles.actionRow}>
@@ -200,9 +190,8 @@ export default function AuthPage() {
       </div>}
 
       <div style={styles.footerActions}>
-        {mode !== "signup" && <button type="button" style={styles.linkButton} onClick={() => chooseMode("signup")}>Create a staff account</button>}
-        {mode !== "signin" && <button type="button" style={styles.linkButton} onClick={() => chooseMode("signin")}>Back to sign in</button>}
-        {mode !== "admin" && <button type="button" style={styles.adminLink} onClick={() => chooseMode("admin")}>Platform admin setup</button>}
+        {mode === "signin" ? <button type="button" style={styles.linkButton} onClick={() => chooseMode("signup")}>Create a staff account</button> : <button type="button" style={styles.linkButton} onClick={() => chooseMode("signin")}>Back to sign in</button>}
+        <button type="button" style={styles.adminLink} onClick={selectAdminLogin}>Platform admin sign-in</button>
       </div>
 
       {message && <div style={styles.notice} role="status">{message}</div>}
@@ -229,12 +218,12 @@ function nextPath() {
 }
 
 const styles: Record<string, React.CSSProperties> = {
-  page: { minHeight: "100vh", display: "grid", gridTemplateColumns: "minmax(0,1.15fr) minmax(360px,.85fr)", gap: 32, alignItems: "center", padding: "clamp(24px,5vw,72px)", fontFamily: "system-ui,-apple-system,sans-serif", background: "linear-gradient(135deg,#edf4f4,#f8faf8 55%,#eef3f7)", color: "#173f57" },
+  page: { minHeight: "100vh", display: "grid", gridTemplateColumns: "minmax(0,1.15fr) minmax(340px,.85fr)", gap: 32, alignItems: "center", padding: "clamp(24px,5vw,72px)", fontFamily: "system-ui,-apple-system,sans-serif", background: "linear-gradient(135deg,#edf4f4,#f8faf8 55%,#eef3f7)", color: "#173f57" },
   hero: { maxWidth: 720 },
   eyebrow: { fontSize: 12, fontWeight: 800, letterSpacing: ".14em", color: "#4b7685" },
   heroTitle: { fontSize: "clamp(38px,5vw,66px)", lineHeight: 1.02, letterSpacing: "-.045em", margin: "12px 0 20px" },
   heroText: { fontSize: 18, lineHeight: 1.65, color: "#49636d", maxWidth: 650 },
-  featureGrid: { display: "grid", gridTemplateColumns: "repeat(3,minmax(0,1fr))", gap: 12, marginTop: 28 },
+  featureGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: 12, marginTop: 28 },
   feature: { display: "grid", gap: 5, padding: 16, borderRadius: 16, background: "rgba(255,255,255,.74)", border: "1px solid rgba(23,63,87,.10)" },
   card: { width: "100%", maxWidth: 510, justifySelf: "end", padding: "clamp(24px,4vw,42px)", borderRadius: 26, background: "rgba(255,255,255,.94)", boxShadow: "0 24px 70px rgba(25,58,70,.15)", border: "1px solid rgba(23,63,87,.09)" },
   muted: { color: "#61747c", lineHeight: 1.55, marginBottom: 22 },
