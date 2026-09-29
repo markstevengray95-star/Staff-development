@@ -40,6 +40,7 @@ if (duplicateRoutes.length) failures.push(`Duplicate Next.js route outputs: ${[.
 
 const requiredRoutes = [
   "/", "/auth", "/reset-password", "/admin", "/admin-login",
+  "/dashboard", "/knowledge-base", "/ai-course-builder",
   "/cpd", "/course-audit", "/course-quality-dashboard", "/facilitator", "/impact",
   "/development", "/pathways", "/pathways/personal", "/adaptive", "/subject-cpd", "/reading", "/micro-cpd", "/training", "/recommendations",
   "/simulator", "/actions", "/coach", "/ai-coach", "/coaching", "/needs-audit", "/portfolio", "/standards", "/external-cpd",
@@ -50,6 +51,16 @@ const requiredRoutes = [
 ];
 for (const route of requiredRoutes) {
   if (!uniqueRoutes.has(route)) failures.push(`Missing critical migrated route: ${route}`);
+}
+
+const requiredApiFiles = [
+  "app/api/ai-coach/route.ts",
+  "app/api/ai-course-builder/route.ts",
+  "app/api/knowledge-base/ask/route.ts",
+  "app/api/knowledge-base/extract/route.ts",
+];
+for (const file of requiredApiFiles) {
+  if (!fs.existsSync(path.join(root, file))) failures.push(`Missing critical AI/API bridge: ${file}`);
 }
 
 const sourceFiles = walk(appRoot).filter(file => /\.(tsx?|jsx?|css)$/.test(file));
@@ -92,7 +103,7 @@ const migrationAudit = path.join(root, "MIGRATION-AUDIT.md");
 if (!fs.existsSync(migrationAudit)) failures.push("MIGRATION-AUDIT.md is missing");
 else {
   const text = fs.readFileSync(migrationAudit, "utf8");
-  for (const phrase of ["Phase 8", "/facilitator", "/zones-cpd/studio", "/zones-school", "/ai-coach", "/learning-walks", "/pathways/personal", "/improvement/programmes", "/live-presenter"]) {
+  for (const phrase of ["Phase 8", "/facilitator", "/zones-cpd/studio", "/zones-school", "/ai-coach", "/learning-walks", "/pathways/personal", "/improvement/programmes", "/live-presenter", "/dashboard", "/knowledge-base", "/ai-course-builder"]) {
     if (!text.includes(phrase)) warnings.push(`Migration audit does not yet mention ${phrase}`);
   }
 }
