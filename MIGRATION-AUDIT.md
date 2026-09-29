@@ -4,7 +4,7 @@ Audit date: 2026-09-29
 
 Source snapshots used for the migration audit:
 - `markstevengray95-star/zones` — `c1c50e9a0a7de5ae615ab2d37536769205aea074`
-- `markstevengray95-star/teaching-cpd` — `46fcdeb9b6a8f5ebf4d951cf0e0970e354d64015`
+- `markstevengray95-star/teaching-cpd` — `dabe57d77a5b0f1d08cc3e6e467957b681f8710c`
 - Target: `markstevengray95-star/Staff-development`
 
 ## Migration rule
@@ -28,7 +28,7 @@ Every functional route in `teaching-cpd` is exposed in Staff Development either 
 | `/certificates` | migrated |
 | `/coach` | migrated |
 | `/coaching` | migrated |
-| `/course-audit` | migrated · Phase 1 automated library audit |
+| `/course-audit` | migrated · Phases 1–2 automated library audit |
 | `/course-packs` | migrated |
 | `/course-studio` | migrated |
 | `/custom/[slug]` | migrated |
@@ -70,7 +70,7 @@ Every functional route in `teaching-cpd` is exposed in Staff Development either 
 | `/training` | migrated |
 | `/verify` | migrated |
 
-The complete source CPD catalogue, course expansion data, interactive course engine, presentations, reading expansions, simulations, certificates, pathways, recommendations, safeguarding depth and school-course batches remain available through the pinned `teaching-cpd` package and target bridge routes. Phase 1 additionally adds the catalogue-wide `2026.1` course-quality template and 100-point automated audit while retaining the earlier bespoke batch QA layers.
+The complete source CPD catalogue, course expansion data, interactive course engine, presentations, reading expansions, simulations, certificates, pathways, recommendations, safeguarding depth and school-course batches remain available through the pinned `teaching-cpd` package and target bridge routes. Phase 1 adds the catalogue-wide `2026.1` course-quality template and 100-point automated audit while retaining the earlier bespoke batch QA layers. Phase 2 adds five deeper knowledge sections to every course: connected core knowledge, misconceptions and non-examples, worked application, inclusive SEND/EAL application, and evidence/implementation follow-through. Phase 2 also enforces a minimum substantive knowledge threshold at build time.
 
 ## Zones route / capability audit
 
