@@ -4,12 +4,12 @@ Audit date: 2026-09-29
 
 Source snapshots used for the migration audit:
 - `markstevengray95-star/zones` — `c1c50e9a0a7de5ae615ab2d37536769205aea074`
-- `markstevengray95-star/teaching-cpd` — `dc6b6991feb273ddd236a6f5630c97cb0409e263`
+- `markstevengray95-star/teaching-cpd` — `acc78b3668524afcd4084bcdffe0ed1582216b4c`
 - Target: `markstevengray95-star/Staff-development`
 
 ## Migration rule
 
-The goal is **functional completeness**, not copying obsolete duplicate files. The Zones repository contains many versioned replacements of the same tool. The current active feature set referenced by its final `index.html` is migrated once into the unified app. Old password gates, owner setup flows and obsolete Supabase endpoints are intentionally replaced by the unified Staff Development authentication connected to the CPD Supabase project.
+The goal is **functional completeness**, not copying obsolete duplicate files. The Zones repository contains many versioned replacements of the same tool. The current active feature set referenced by its final `index.html` is migrated once into the unified app. Old password gates, owner setup flows and obsolete Supabase endpoints are intentionally replaced by the unified Staff Development authentication connected to the dedicated CPD Supabase project.
 
 ## Teaching CPD route audit
 
@@ -28,7 +28,8 @@ Every functional route in `teaching-cpd` is exposed in Staff Development either 
 | `/certificates` | migrated |
 | `/coach` | migrated |
 | `/coaching` | migrated |
-| `/course-audit` | migrated · Phases 1–7 automated audit |
+| `/course-audit` | migrated · Phases 1–8 automated course/content/presentation/practice/mastery/follow-through/facilitation audit |
+| `/course-quality-dashboard` | migrated · Phase 8 final QA dashboard |
 | `/course-packs` | migrated |
 | `/course-studio` | migrated |
 | `/custom/[slug]` | migrated |
@@ -71,19 +72,25 @@ Every functional route in `teaching-cpd` is exposed in Staff Development either 
 | `/training` | migrated |
 | `/verify` | migrated |
 
-The complete source CPD catalogue, course expansion data, interactive course engine, presentations, reading expansions, simulations, certificates, pathways, recommendations, safeguarding depth and school-course batches remain available through the pinned `teaching-cpd` package and target bridge routes.
+The complete source CPD catalogue, course expansion data, interactive course engine, presentations, reading expansions, simulations, certificates, pathways, recommendations, safeguarding depth and school-course batches remain available through the exact pinned `teaching-cpd` commit and target bridge routes.
 
-Phase 1 adds the catalogue-wide `2026.1` course-quality template and automated audit while retaining the earlier bespoke batch QA layers. Phase 2 adds five deeper knowledge sections to every course: connected core knowledge, misconceptions and non-examples, worked application, inclusive SEND/EAL application, and evidence/implementation follow-through. Phase 2 also enforces a minimum substantive knowledge threshold at build time.
+## Course improvement phases
 
-Phase 3 adds the presentation-first delivery layer to every course: opening visual challenge, Understand/Practise/Transfer dividers, visual worked example, visual recap, automatic pacing breaks, concise presenter mode, generated presenter notes, fullscreen delivery, session timer, keyboard shortcuts and active-slide facilitator prompts.
+**Phase 1 — standardisation.** The full catalogue uses the shared course-quality template and automated baseline audit while retaining bespoke batch QA.
 
-Phase 4 adds six higher-order practice environments to every course: evidence sorting, professional-response ranking, hotspot investigation, implementation-vs-impact evidence analysis, branching professional cases and an implementation simulator. Build-time validation requires all six practice types and interaction metadata in every course.
+**Phase 2 — content depth.** Every course gains connected core knowledge, misconceptions/non-examples, worked application, SEND/EAL access and evidence/implementation follow-through, with a substantive-knowledge build threshold.
 
-Phase 5 adds five mastery-assessment stages to every course: diagnostic baseline, rotating retrieval mastery, scenario application, final understanding assessment and a demonstrated-application gate. Incorrect responses receive explanations and targeted reteach before rotated retries. Latest/best scores, attempts and weak topics remain attached to the same cloud CPD progress record.
+**Phase 3 — presentations.** Every course receives presentation-first delivery, visual section dividers, worked examples, recap, pacing breaks, presenter notes, fullscreen delivery, timers and keyboard controls.
 
-Phase 6 adds post-completion follow-through. Completed courses automatically create 7-day transfer, 30-day impact and 90-day sustain checkpoints from the recorded completion date. Follow-ups include spaced retrieval from the course mastery bank, implementation status, private PDF/image evidence upload, impact notes and next-step decisions. Leadership reporting uses aggregate implementation patterns and applies a minimum three-staff privacy threshold rather than ranking individuals.
+**Phase 4 — advanced practice.** Every course contains six higher-order practice environments: evidence sorting, response ranking, hotspot investigation, implementation-vs-impact analysis, branching professional cases and an implementation simulator.
 
-Phase 7 adds the full facilitator/presenter layer. Every course now has validated 15, 30, 60 and 90-minute live delivery routes. The global facilitator console marks route slides, unlocks route navigation for presenters without changing learner completion, shows route pacing, provides purpose/facilitator move/discussion/misconception/accessibility/extension notes, includes a two-minute discussion timer, offers larger-text/high-contrast/low-motion controls, supports keyboard route navigation and links to printable `/facilitator` packs. The printable pack works for every course and includes a route agenda, timings, prompts, inclusion guidance and the hand-off into Phase 5 mastery and Phase 6 follow-through. Build-time validation requires all four routes, exact route timing, substantive content, interaction and transfer in every route.
+**Phase 5 — mastery assessment.** Every course contains diagnostic baseline, rotating retrieval, scenario application, final mastery and demonstrated-application gates, with targeted reteach and cloud-saved attempt evidence.
+
+**Phase 6 — implementation and impact.** Completed courses create 7-day transfer, 30-day impact and 90-day sustain reviews, with spaced retrieval, implementation status, private evidence upload and privacy-protected aggregate leadership reporting.
+
+**Phase 7 — facilitator delivery.** Every course has validated 15, 30, 60 and 90-minute live routes, facilitator notes, route pacing, discussion timer, display accessibility controls, route-aware navigation and printable `/facilitator` packs. Every route must include substantive learning, interaction and transfer and total exactly the selected session time.
+
+**Phase 8 — final QA.** Every course now passes a final build-blocking quality gate covering unique IDs, presentation opening and pacing, unfinished editorial copy, Phase 4 practice, Phase 5 mastery, Phase 6 follow-through, Phase 7 route integrity, and readable/meaningful visual and interactive content. Advisory checks flag weak objectives, interaction density, repeated slide titles and unclear summaries without unnecessarily blocking a build. Results are visible at `/course-quality-dashboard`. The final QA detector was refined during implementation to distinguish real editorial markers such as `TODO`, `FIXME`, `TBC`, `coming soon` and bracketed placeholder text from normal English such as “have to be added”.
 
 ## Zones route / capability audit
 
@@ -101,6 +108,8 @@ Phase 7 adds the full facilitator/presenter layer. Every course now has validate
 | Implementation | `/zones-school` → Implementation |
 | Impact Hub | `/zones-school` → Impact Hub + `/impact` |
 | CPD Academy | `/zones-cpd` |
+| CPD Studio | `/zones-cpd/studio` |
+| CPD Escape Room | `/zones-cpd/escape-room` |
 | Intervention Plans | main platform Interventions |
 | School Platform | `/zones-school` |
 | School Operations | `/zones-school` → School Operations |
@@ -146,14 +155,16 @@ Phase 7 adds the full facilitator/presenter layer. Every course now has validate
 | `platform-data.js` / `platform.js` | `/zones-school` + unified accounts/backend |
 | `enhancements.js` / `experience-plus.js` | folded into rebuilt Zones suite UI |
 
-## Intentionally not copied as standalone features
+## Intentionally replaced rather than copied
 
 - `password-gate-v42/v43/v44` → unified CPD-project authentication.
-- `cpd-admin-passwords-v42/v43/v44`, `cpd-owner-setup-v40`, old admin auth helpers → unified `/admin-login` and `/admin`.
-- Old Zones hard-coded Supabase URL `emjmvgginijkupwuflla` → **not migrated**. Staff Development uses the dedicated CPD Supabase project.
+- `cpd-admin-passwords-v42/v43/v44`, `cpd-owner-setup-v40` and old admin auth helpers → unified `/admin-login` and `/admin`.
+- Old Zones hard-coded Supabase URL `emjmvgginijkupwuflla` → **not migrated into executable source**. Staff Development uses the dedicated CPD Supabase project.
 - Superseded duplicate Regulation Room / Escape Room versions → consolidated latest capability set.
-- Standalone service-worker/cache plumbing from the static Zones app → replaced by the Next.js deployment architecture.
+- Standalone static service-worker/cache plumbing → replaced by the Next.js/Vercel architecture.
 
-## Ongoing completeness check
+## Continuous platform integrity check
 
-When either source repository changes, compare its active route/script manifest with this document before declaring the combined platform complete. Any new functional source feature should either receive a target route/capability or be explicitly marked as superseded/replaced here.
+`npm run audit:platform` is now part of Staff Development CI before the production build. It fails the pipeline if a critical migrated route disappears, if duplicate route outputs are introduced, if the `teaching-cpd` package is not pinned to an exact commit, or if the obsolete `emjmvgginijkupwuflla` backend reappears in executable source. Literal unresolved internal route references are reported as warnings for review.
+
+When either source repository changes, compare its active route/script manifest with this document before declaring the combined platform complete. Any new functional source feature must either receive a target route/capability or be explicitly marked as superseded/replaced here.
