@@ -7,6 +7,9 @@ import {
   courseAssessmentAudit as sourceCourseAssessmentAudit,
   courseFollowThroughAudit as sourceCourseFollowThroughAudit,
   courseFacilitatorAudit as sourceCourseFacilitatorAudit,
+  courseFinalQaAudit as sourceCourseFinalQaAudit,
+  courseFinalQaSummary as sourceCourseFinalQaSummary,
+  auditCourseFinalQaPhase8 as sourceAuditCourseFinalQaPhase8,
   getPhase6RetrievalQuestions as sourceGetPhase6RetrievalQuestions,
   PHASE6_REVIEW_STAGES as sourcePhase6ReviewStages,
   getPhase7FacilitatorPlan as sourceGetPhase7FacilitatorPlan,
@@ -23,6 +26,8 @@ import type {
   Phase7RouteMinutes,
   Phase7SlideGuide,
   Phase7FacilitatorPlan,
+  Phase8Check,
+  Phase8CourseAudit,
 } from "teaching-cpd/lib/catalogue";
 
 export { categoryOrder, COURSE_TEMPLATE_STAGES, COURSE_TEMPLATE_VERSION };
@@ -33,10 +38,12 @@ export const coursePracticeAudit = sourceCoursePracticeAudit;
 export const courseAssessmentAudit = sourceCourseAssessmentAudit;
 export const courseFollowThroughAudit = sourceCourseFollowThroughAudit;
 export const courseFacilitatorAudit = sourceCourseFacilitatorAudit;
+export const courseFinalQaAudit = sourceCourseFinalQaAudit;
+export const courseFinalQaSummary = sourceCourseFinalQaSummary;
 export const getPhase6RetrievalQuestions = sourceGetPhase6RetrievalQuestions;
 export const PHASE6_REVIEW_STAGES = sourcePhase6ReviewStages;
 export const PHASE7_SESSION_ROUTES = sourcePhase7SessionRoutes;
-export type { Role, CourseCategory, Phase7RouteMinutes, Phase7SlideGuide, Phase7FacilitatorPlan };
+export type { Role, CourseCategory, Phase7RouteMinutes, Phase7SlideGuide, Phase7FacilitatorPlan, Phase8Check, Phase8CourseAudit };
 export type Module = CourseModule;
 
 export type CourseModule = SourceModule & {
@@ -120,4 +127,8 @@ export function getPhase7FacilitatorPlan(course: Course, routeMinutes: Phase7Rou
 
 export function getPhase7SlideGuide(course: Course, module: CourseModule, routeMinutes: Phase7RouteMinutes = 60) {
   return sourceGetPhase7SlideGuide(course as unknown as SourceCourse, module as unknown as SourceModule, routeMinutes);
+}
+
+export function auditCourseFinalQaPhase8(course: Course) {
+  return sourceAuditCourseFinalQaPhase8(course as unknown as SourceCourse);
 }
