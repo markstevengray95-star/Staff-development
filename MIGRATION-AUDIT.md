@@ -4,7 +4,7 @@ Audit date: 2026-09-29
 
 Source snapshots used for the migration audit:
 - `markstevengray95-star/zones` — `c1c50e9a0a7de5ae615ab2d37536769205aea074`
-- `markstevengray95-star/teaching-cpd` — `276140ce13250895f5331ea960df5a398cc1ff66`
+- `markstevengray95-star/teaching-cpd` — `46fcdeb9b6a8f5ebf4d951cf0e0970e354d64015`
 - Target: `markstevengray95-star/Staff-development`
 
 ## Migration rule
@@ -28,6 +28,7 @@ Every functional route in `teaching-cpd` is exposed in Staff Development either 
 | `/certificates` | migrated |
 | `/coach` | migrated |
 | `/coaching` | migrated |
+| `/course-audit` | migrated · Phase 1 automated library audit |
 | `/course-packs` | migrated |
 | `/course-studio` | migrated |
 | `/custom/[slug]` | migrated |
@@ -69,7 +70,7 @@ Every functional route in `teaching-cpd` is exposed in Staff Development either 
 | `/training` | migrated |
 | `/verify` | migrated |
 
-The complete source CPD catalogue, course expansion data, interactive course engine, presentations, reading expansions, simulations, certificates, pathways, recommendations, safeguarding depth and school-course batches remain available through the pinned `teaching-cpd` package and target bridge routes.
+The complete source CPD catalogue, course expansion data, interactive course engine, presentations, reading expansions, simulations, certificates, pathways, recommendations, safeguarding depth and school-course batches remain available through the pinned `teaching-cpd` package and target bridge routes. Phase 1 additionally adds the catalogue-wide `2026.1` course-quality template and 100-point automated audit while retaining the earlier bespoke batch QA layers.
 
 ## Zones route / capability audit
 
