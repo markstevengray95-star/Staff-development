@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import "../zones-suite.css";
+import "../zones-migration.css";
 
 export default function ZonesSuiteLayout({ children }: { children: ReactNode }) {
   return (
@@ -10,8 +11,10 @@ export default function ZonesSuiteLayout({ children }: { children: ReactNode }) 
           <a href="/zones">Overview</a>
           <a href="/regulation-room">Regulation Room</a>
           <a href="/zones-cpd">Zones CPD</a>
+          <a href="/zones-cpd/studio">CPD Studio</a>
           <a href="/zones-cpd/escape-room">Escape Room</a>
           <a href="/zone-quest">Zone Quest</a>
+          <a href="/zones-school">School Platform</a>
           <a href="/">Main platform</a>
         </nav>
       </header>
