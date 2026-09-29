@@ -31,6 +31,7 @@ const tools: AdminTool[] = [
   { href: "/safeguarding", title: "Safeguarding centre", description: "Requirements, roles, evidence and current guidance.", group: "Compliance" },
   { href: "/standards", title: "Professional standards", description: "Teachers' Standards and CPD framework links.", group: "Compliance" },
   { href: "/quality", title: "Quality assurance", description: "Review accuracy, accessibility and course quality.", group: "Leadership" },
+  { href: "/course-audit", title: "Course quality audit", description: "Automated 100-point audit of every live course and its presentation structure.", group: "Leadership" },
   { href: "/improvement", title: "Improvement planning", description: "Connect school priorities with CPD actions.", group: "Leadership" },
   { href: "/simulator", title: "Practice simulator", description: "Scenario-based rehearsal before classroom application.", group: "Delivery" },
   { href: "/reading", title: "Professional reading", description: "Reading and evidence resources linked to development.", group: "Library" },
