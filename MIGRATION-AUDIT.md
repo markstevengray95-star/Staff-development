@@ -4,7 +4,7 @@ Audit date: 2026-09-29
 
 Source snapshots used for the migration audit:
 - `markstevengray95-star/zones` — `c1c50e9a0a7de5ae615ab2d37536769205aea074`
-- `markstevengray95-star/teaching-cpd` — `10099e5a1b15937cdc470334e433fd4d4d8040c4`
+- `markstevengray95-star/teaching-cpd` — `16acfbe03b605cf99ad7692a5f876fa83c6f3d90`
 - Target: `markstevengray95-star/Staff-development`
 
 ## Migration rule
@@ -28,7 +28,7 @@ Every functional route in `teaching-cpd` is exposed in Staff Development either 
 | `/certificates` | migrated |
 | `/coach` | migrated |
 | `/coaching` | migrated |
-| `/course-audit` | migrated · Phases 1–4 automated course/content/presentation/practice audit |
+| `/course-audit` | migrated · Phases 1–5 automated course/content/presentation/practice/assessment audit |
 | `/course-packs` | migrated |
 | `/course-studio` | migrated |
 | `/custom/[slug]` | migrated |
@@ -77,6 +77,8 @@ Phase 1 adds the catalogue-wide `2026.1` course-quality template and 100-point a
 Phase 3 adds the presentation-first delivery layer to every course: opening visual challenge, Understand/Practise/Transfer dividers, visual worked example, visual recap, automatic pacing breaks when three content slides occur consecutively, concise presenter mode, generated presenter notes, fullscreen delivery, session timer, keyboard shortcuts, and active-slide facilitator prompts. The combined Staff Development root loads the CPD presentation and interactivity controllers directly, so these presentation features run in the unified product rather than only the source CPD app.
 
 Phase 4 adds six higher-order practice environments to every course: evidence sorting, professional-response ranking, hotspot investigation, implementation-vs-impact evidence analysis, branching professional cases and an implementation simulator. Category-specific evidence and scenarios are generated for Teaching & Learning, Safeguarding, SEND, Leadership, Wellbeing and Digital Teaching. The Phase 4 controller preserves the existing course-module completion flow so successful practice activities continue to use the same cloud-saved CPD progress record in Staff Development. Build-time validation requires all six practice types and their interaction metadata in every course.
+
+Phase 5 adds five mastery-assessment stages to every course: a diagnostic baseline, rotating retrieval mastery, scenario application, final understanding assessment and a demonstrated-application gate. Wrong responses receive explicit explanations and targeted reteach guidance before a rotated retry. The diagnostic identifies starting points without blocking progress; retrieval and scenario assessment require at least 75%, final mastery requires at least 80%, and the final three-question application gate requires full security. Latest and best scores, attempt counts and weak topics are stored inside the existing `staff_development_course_progress.reflections` metadata so assessment evidence remains attached to the same cloud CPD record rather than creating a second progress system. Build-time validation requires all five assessment stages and minimum question-bank depth in every course.
 
 ## Zones route / capability audit
 
