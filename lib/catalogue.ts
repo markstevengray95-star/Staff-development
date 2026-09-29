@@ -1,4 +1,10 @@
-import { categoryOrder, courses as sourceCourses } from "teaching-cpd/lib/catalogue";
+import {
+  categoryOrder,
+  courses as sourceCourses,
+  courseQualityAudit as sourceCourseQualityAudit,
+  COURSE_TEMPLATE_STAGES,
+  COURSE_TEMPLATE_VERSION,
+} from "teaching-cpd/lib/catalogue";
 import type {
   Course as SourceCourse,
   Module as SourceModule,
@@ -6,8 +12,9 @@ import type {
   CourseCategory,
 } from "teaching-cpd/lib/catalogue";
 
-export { categoryOrder };
+export { categoryOrder, COURSE_TEMPLATE_STAGES, COURSE_TEMPLATE_VERSION };
 export const categories = categoryOrder;
+export const courseQualityAudit = sourceCourseQualityAudit;
 export type { Role, CourseCategory };
 export type Module = CourseModule;
 
