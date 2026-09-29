@@ -6,8 +6,12 @@ import {
   coursePracticeAudit as sourceCoursePracticeAudit,
   courseAssessmentAudit as sourceCourseAssessmentAudit,
   courseFollowThroughAudit as sourceCourseFollowThroughAudit,
+  courseFacilitatorAudit as sourceCourseFacilitatorAudit,
   getPhase6RetrievalQuestions as sourceGetPhase6RetrievalQuestions,
   PHASE6_REVIEW_STAGES as sourcePhase6ReviewStages,
+  getPhase7FacilitatorPlan as sourceGetPhase7FacilitatorPlan,
+  getPhase7SlideGuide as sourceGetPhase7SlideGuide,
+  PHASE7_SESSION_ROUTES as sourcePhase7SessionRoutes,
   COURSE_TEMPLATE_STAGES,
   COURSE_TEMPLATE_VERSION,
 } from "teaching-cpd/lib/catalogue";
@@ -16,6 +20,9 @@ import type {
   Module as SourceModule,
   Role,
   CourseCategory,
+  Phase7RouteMinutes,
+  Phase7SlideGuide,
+  Phase7FacilitatorPlan,
 } from "teaching-cpd/lib/catalogue";
 
 export { categoryOrder, COURSE_TEMPLATE_STAGES, COURSE_TEMPLATE_VERSION };
@@ -25,9 +32,11 @@ export const coursePresentationAudit = sourceCoursePresentationAudit;
 export const coursePracticeAudit = sourceCoursePracticeAudit;
 export const courseAssessmentAudit = sourceCourseAssessmentAudit;
 export const courseFollowThroughAudit = sourceCourseFollowThroughAudit;
+export const courseFacilitatorAudit = sourceCourseFacilitatorAudit;
 export const getPhase6RetrievalQuestions = sourceGetPhase6RetrievalQuestions;
 export const PHASE6_REVIEW_STAGES = sourcePhase6ReviewStages;
-export type { Role, CourseCategory };
+export const PHASE7_SESSION_ROUTES = sourcePhase7SessionRoutes;
+export type { Role, CourseCategory, Phase7RouteMinutes, Phase7SlideGuide, Phase7FacilitatorPlan };
 export type Module = CourseModule;
 
 export type CourseModule = SourceModule & {
@@ -104,3 +113,11 @@ function adaptCourse(course: SourceCourse): Course {
 }
 
 export const courses: Course[] = sourceCourses.map(adaptCourse);
+
+export function getPhase7FacilitatorPlan(course: Course, routeMinutes: Phase7RouteMinutes = 60) {
+  return sourceGetPhase7FacilitatorPlan(course as unknown as SourceCourse, routeMinutes);
+}
+
+export function getPhase7SlideGuide(course: Course, module: CourseModule, routeMinutes: Phase7RouteMinutes = 60) {
+  return sourceGetPhase7SlideGuide(course as unknown as SourceCourse, module as unknown as SourceModule, routeMinutes);
+}
