@@ -5,6 +5,7 @@ const root = process.cwd();
 const appRoot = path.join(root, "app");
 const failures = [];
 const warnings = [];
+const obsoleteBackendId = ["emjmvggi", "nijkupwuflla"].join("");
 
 function walk(dir) {
   if (!fs.existsSync(dir)) return [];
@@ -78,7 +79,7 @@ const executableFiles = walk(root).filter(file => {
 });
 for (const file of executableFiles) {
   const text = fs.readFileSync(file, "utf8");
-  if (text.includes("emjmvgginijkupwuflla")) failures.push(`Obsolete Supabase backend found in executable source: ${path.relative(root, file)}`);
+  if (text.includes(obsoleteBackendId)) failures.push(`Obsolete Supabase backend found in executable source: ${path.relative(root, file)}`);
 }
 
 const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
