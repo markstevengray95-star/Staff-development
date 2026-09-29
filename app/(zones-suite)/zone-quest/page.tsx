@@ -1,0 +1,27 @@
+"use client";
+
+import { useMemo, useState } from "react";
+
+type Zone="blue"|"green"|"yellow"|"red";
+const questions=[
+{text:"A pupil arrives after lunch, looks tired, puts their head down and is slow to begin.",zone:"blue" as Zone,response:"Connect briefly, reduce the first-step demand and consider movement or water before assuming disengagement."},
+{text:"A pupil is bouncing in their seat before a practical they have been looking forward to.",zone:"yellow" as Zone,response:"Excitement can sit in Yellow. Channel the energy with a clear routine and purposeful role."},
+{text:"A pupil works steadily, asks for help appropriately and recovers from small mistakes.",zone:"green" as Zone,response:"Notice what is helping and maintain the conditions that support successful regulation."},
+{text:"A pupil is shouting, cannot process lengthy instructions and pushes materials away.",zone:"red" as Zone,response:"Prioritise safety, reduce language, create space and delay problem-solving."},
+{text:"A pupil repeatedly checks the clock and asks the same question before a test.",zone:"yellow" as Zone,response:"Treat the behaviour as possible anxiety or heightened alertness and clarify the plan."},
+{text:"A pupil is quiet during independent work but says they are worried about being wrong.",zone:"yellow" as Zone,response:"Visible stillness does not always mean Green. Use pupil voice and context."},
+{text:"A pupil yawns, rubs their eyes and says they cannot get started after a poor night's sleep.",zone:"blue" as Zone,response:"Low energy may need connection, movement and a clear first step."},
+{text:"A pupil celebrates loudly after solving a difficult problem and talks rapidly to peers.",zone:"yellow" as Zone,response:"High positive energy can still sit in Yellow; guide it without treating it as automatically problematic."},
+{text:"A pupil calmly asks to use a visual checklist before starting a practical.",zone:"green" as Zone,response:"Using a support strategy independently can be evidence of successful regulation."},
+{text:"A pupil panics when a fire alarm interrupts a lesson and cannot follow multi-step language.",zone:"red" as Zone,response:"Safety, very simple language and calm co-regulation come before reflection."},
+];
+const zoneNames:Record<Zone,string>={blue:"Blue",green:"Green",yellow:"Yellow",red:"Red"};
+const strategies=["Reduce verbal load","Show one first step","Offer two bounded choices","Short movement reset","Quiet check-in","Visual sequence"];
+
+export default function ZoneQuestPage(){const [index,setIndex]=useState(0);const [answer,setAnswer]=useState<Zone|null>(null);const [score,setScore]=useState(0);const [streak,setStreak]=useState(0);const [best,setBest]=useState(0);const [strategy,setStrategy]=useState("");const q=questions[index%questions.length];const progress=useMemo(()=>Math.round(((index%questions.length)+1)/questions.length*100),[index]);
+ function choose(zone:Zone){if(answer)return;setAnswer(zone);if(zone===q.zone){setScore(v=>v+100+streak*10);setStreak(v=>{const n=v+1;setBest(b=>Math.max(b,n));return n})}else setStreak(0)}
+ function next(){setIndex(v=>(v+1)%questions.length);setAnswer(null);setStrategy("")}
+ return <main className="zsPage zqPage"><section className="zqHero"><div><span className="zsEyebrow">ZONE QUEST</span><h1>Practise judgement, not labelling.</h1><p>Work through fast scenarios, identify a likely regulation state, then choose an adult strategy. Context and pupil voice always matter more than surface behaviour.</p></div><div className="zqStats"><div><strong>{score}</strong><span>points</span></div><div><strong>{streak}</strong><span>streak</span></div><div><strong>{best}</strong><span>best</span></div></div></section><div className="zqProgress"><i style={{width:`${progress}%`}}/></div>
+ <section className="zqArena"><header><span>Scenario {(index%questions.length)+1} of {questions.length}</span><strong>Choose the most likely zone</strong></header><div className="zqPrompt"><span>?</span><p>{q.text}</p></div><div className="zqZones">{(["blue","green","yellow","red"] as Zone[]).map(zone=><button className={`${zone} ${answer===zone?"chosen":""}`} disabled={!!answer} onClick={()=>choose(zone)} key={zone}><i/><strong>{zoneNames[zone]} Zone</strong></button>)}</div>
+ {answer&&<div className={answer===q.zone?"zqFeedback success":"zqFeedback"}><h2>{answer===q.zone?"Reasonable interpretation":"Re-check the context"}</h2><p>{answer===q.zone?`A likely interpretation is ${zoneNames[q.zone]} Zone.`:`A more likely interpretation here is ${zoneNames[q.zone]} Zone.`} {q.response}</p><h3>Now choose an adult strategy</h3><div className="zqStrategyGrid">{strategies.map(item=><button className={strategy===item?"active":""} onClick={()=>setStrategy(item)} key={item}>{item}</button>)}</div>{strategy&&<div className="zqStrategyNote"><strong>Your choice:</strong> {strategy}. The useful follow-up question is: did it preserve safety, dignity and access to learning?</div>}<button className="zsPrimary" onClick={next}>Next scenario →</button></div>}
+ </section><section className="zsStrip"><div><b>Team mode</b><span>Project the scenario and ask teams to justify their choice before revealing the likely interpretation.</span></div><div><b>No fixed labels</b><span>A pupil can move between zones quickly and the same behaviour can have different causes.</span></div><div><b>Transfer to practice</b><span>Always ask what changed, what the pupil says and what adult action is most proportionate.</span></div></section></main>}
