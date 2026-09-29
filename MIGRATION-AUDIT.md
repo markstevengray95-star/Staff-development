@@ -32,6 +32,7 @@ The following source capabilities are exposed in Staff Development either throug
 - `/development`, `/pathways`, `/adaptive`, `/subject-cpd`, `/reading`, `/micro-cpd`, `/training`, `/recommendations` — staff learning/development tools.
 - `/simulator`, `/actions`, `/coach`, `/coaching`, `/needs-audit`, `/portfolio`, `/standards`, `/external-cpd` — application and evidence tools.
 - `/school-hub`, `/department-cpd`, `/leadership`, `/live`, `/policy-training`, `/quality`, `/school-access`, `/staff-access`, `/staff-sync` — school/leadership tools.
+- `/appraisal`, `/compliance`, `/induction`, `/departments` — whole-school staff-development workflows.
 - `/safeguarding`, `/safeguarding/documents`, `/safety`, `/certificates`, `/reminders`, `/improvement` — compliance/follow-up tools.
 - `/course-studio`, `/course-packs`, `/help`, `/accessibility`, `/launch-readiness`, `/admin`, `/admin-login`, `/platform`, `/owner-portal` — creation, administration and platform tools.
 - `/auth` and `/reset-password` — intentionally replaced by Staff Development's dedicated CPD-project auth flow.
@@ -101,6 +102,40 @@ The following source capabilities are exposed in Staff Development either throug
 - Computes a practical next action from due impact reviews, assignments, pathway progress and development targets.
 - Links directly to AI Coach, School Knowledge, Personal Pathways, Action Plans, Training, Portfolio and Impact Review.
 
+## Four whole-school workflow expansion
+
+### Appraisal & Professional Review — `/appraisal`
+- Staff create measurable professional objectives with explicit success criteria, review dates and linked CPD.
+- Evidence can be attached to an objective using reflections, CPD implementation, pupil work, coaching/observation, learning-walk or planning/resource evidence.
+- Formal initial, mid-year and final review records are stored separately from objectives so review history is retained across cycles.
+- Staff choose whether appraisal objectives/evidence are shared with leadership. Reviewers and authorised CPD/Admin roles can access records through RLS; the workflow does not calculate staff quality ratings or rankings.
+- Appraisal naturally connects to completed CPD, personal pathways, portfolio evidence and Phase 6 implementation review.
+
+### Mandatory Training & Compliance — `/compliance`
+- Combines renewable `training_requirements`, verified `training_records` and actual CPD course completion.
+- Staff see only requirements relevant to their role/department and whether each item is current, due within 30 days, expired or missing.
+- CPD Leads/Admins can create organisation requirements for all staff, a role or a department, link them to CPD/policies/external training, set renewal frequency and verify external evidence.
+- Organisation overview reports operational coverage by requirement rather than ranking staff.
+- `training_records` now supports an optional evidence reference and verification note.
+
+### New Staff Induction — `/induction`
+- CPD Leads/Admins can assign role-based induction pathways for ECTs, Teachers, Teaching Assistants, Pastoral staff, Middle Leaders and Support Staff.
+- Default pathways include safeguarding, core policies, school systems, mentor/line-manager meetings, role-specific CPD and an early review.
+- Tasks support CPD, policy, meeting, checklist and evidence types with due dates, staff notes and mentor visibility.
+- Course-linked tasks recognise completed CPD and the pathway can be formally signed off by authorised leaders.
+
+### Department Development Hubs — `/departments`
+- Reuses existing `department_cpd_plans` and `department_cpd_actions` rather than creating a duplicate planning system.
+- Department staff can see the current development plan and actions; authorised Department/CPD/Admin roles can create plans, link CPD, set expected evidence and move actions through implementation.
+- Shared learning-walk evidence is aggregated into common strengths, development themes and CPD recommendations.
+- Phase 6 impact evidence only appears when staff explicitly chose `shared_with_leadership`; Department Leads see their department's shared patterns and CPD/Admin roles can review organisation evidence without individual staff ranking.
+
+## Data/security added for school workflows
+
+The dedicated CPD Supabase project now also contains `appraisal_reviews`, `staff_induction_assignments` and `staff_induction_tasks`, all with RLS enabled. Existing `appraisal_objectives`, `appraisal_evidence`, `training_requirements`, `training_records`, `department_cpd_plans` and `department_cpd_actions` are reused rather than duplicated. `training_records` includes optional `evidence_reference` and `note` fields.
+
+Appraisal review policies restrict records to the staff member, nominated reviewer and authorised organisation CPD/Admin roles. Induction assignment/task policies restrict access to the assigned staff member, mentor and authorised CPD/Admin roles. Shared Phase 6 impact reviews now have an additional leadership-read policy: CPD/Admin roles may read shared organisation evidence, while Department Leads may read shared evidence only for staff in their own department. All new tables use the existing organisation identity helpers and the app continues to use the dedicated CPD Supabase project.
+
 ## Data/security added for AI/platform expansion
 
 The dedicated CPD Supabase project contains `school_knowledge_documents` with RLS enabled. Staff can read only knowledge for their organisation; inserts/updates/deletes are restricted to organisation leadership roles. The private `school-knowledge` storage bucket applies equivalent organisation-scoped read and leader-write/delete policies. Full-text search runs through `search_school_knowledge(...)` under the caller's RLS context.
@@ -143,4 +178,4 @@ Specialist legacy Zones modules for facilitator tools, graph/evidence lab, class
 
 `npm run audit:platform` runs in Staff Development CI before the production build. It fails when a critical route disappears, duplicate route outputs appear, the `teaching-cpd` dependency is not pinned to an exact commit, required AI/API bridges disappear, or the obsolete backend reappears in executable source. Unresolved literal internal links are reported as warnings.
 
-Current required additions include `/dashboard`, `/knowledge-base`, `/ai-course-builder`, `/ai-coach`, `/learning-walks`, `/pathways/personal`, `/improvement/programmes` and `/live-presenter`.
+Current required additions include `/dashboard`, `/knowledge-base`, `/ai-course-builder`, `/ai-coach`, `/learning-walks`, `/pathways/personal`, `/improvement/programmes`, `/live-presenter`, `/appraisal`, `/compliance`, `/induction` and `/departments`.
