@@ -49,7 +49,9 @@ export async function POST(request: Request) {
   const kind = metadata.kind;
   const userId = metadata.user_id;
   const organizationId = metadata.organization_id;
-  const product = metadata.product;
+  // Checkout writes product_code into both checkout-session and subscription metadata.
+  // Keep the legacy `product` fallback so any older live subscriptions remain compatible.
+  const product = metadata.product_code || metadata.product;
   const courseId = metadata.course_id;
   const deleted = event.type === "customer.subscription.deleted";
   const periodEnd = subscription.current_period_end ? new Date(subscription.current_period_end * 1000).toISOString() : null;
