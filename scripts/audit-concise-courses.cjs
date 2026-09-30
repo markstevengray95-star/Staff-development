@@ -10,6 +10,7 @@ require.extensions['.ts'] = (module, filename) => {
 
 const { courses } = require('teaching-cpd/lib/catalogue.ts');
 const { conciseCourse, completedModuleCount } = require('../lib/conciseCourses.ts');
+const { courseSections, slideReadingExtension, readingParagraphs } = require('../lib/presentationLearning.ts');
 const rows = courses.map(original => {
   const concise = conciseCourse(original);
   const retained = new Set(concise.modules.map(module => module.id));
@@ -38,6 +39,27 @@ const rows = courses.map(original => {
   assert.equal(completedModuleCount(concise, [...oldIds, ...oldIds, 'deleted-old-id']), concise.modules.length);
   assert.equal(completedModuleCount(concise, oldIds.filter(id => !retained.has(id))), 0);
   for (const module of concise.modules) assert.equal(module, original.modules.find(item => item.id === module.id));
+  const sections = courseSections(concise);
+  assert.equal(sections.length, 5, `${original.id}: five presentation sections`);
+  assert.equal(sections[0].start, 0);
+  assert.equal(sections.at(-1).end, concise.modules.length);
+  sections.forEach((section, index) => {
+    assert.ok(section.start < section.end);
+    if (index > 0) assert.equal(section.start, sections[index - 1].end);
+  });
+  const extensions = concise.modules.map(module => slideReadingExtension(concise, module)).filter(Boolean);
+  assert.equal(extensions.length, 3, `${original.id}: three added readings`);
+  assert.deepEqual(extensions.map(extension => extension.kind), ['evidence', 'sequence', 'decision']);
+  extensions.forEach(extension => {
+    assert.ok(extension.paragraphs.every(paragraph => paragraph.trim()));
+    assert.ok(extension.scenario, `${original.id}: course-specific scenario`);
+    assert.equal(extension.sequence.length, 4);
+    assert.equal(extension.evidence.length, 3);
+  });
+  for (const module of concise.modules) if (module.type === 'content') {
+    const normalise = text => text.replace(/\s+/g, ' ').trim();
+    assert.equal(normalise(readingParagraphs(module.body).join(' ')), normalise(module.body), `${original.id}: text preserved for ${module.id}`);
+  }
   return { course: concise.title, originalSlides: original.modules.length, conciseSlides: concise.modules.length,
     originalMinutes: original.duration, conciseMinutes: concise.duration,
     reductionPercent: Math.round(100 * (1 - concise.modules.length / original.modules.length)) };

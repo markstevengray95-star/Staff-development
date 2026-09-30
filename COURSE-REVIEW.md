@@ -1,51 +1,66 @@
 # Staff Development course review — 30 September 2026
 
-The 88 published courses were assembled through successive enrichment passes in
-the pinned `teaching-cpd` dependency. Advertised durations were 339–585 minutes.
-Repeated opening slides, automatic checkpoints, multiple transfer prompts and a
-second complete case sequence made the required journey unnecessarily long.
+## Course length
 
-## Change
+The app preserves the latest upstream course-length optimisation and Phases 28–31
+(personalised entry, professional toolkit, implementation and certification).
+On top of that pinned catalogue, the concise Academy route removes 968 repeated
+required slides across 88 courses: 7–15% fewer slides, 14% on average.
+Duration estimates scale with retained slides and remain planning estimates,
+not observed learner timings. The previous 26% comparison was against an older,
+longer dependency and is superseded by this latest-source comparison.
 
-The CPD Academy now opens a concise route by default. It has 15–28% fewer required
-slides (26% average), removing 2,295 slides from required journeys across the
-catalogue. Duration estimates scale with the retained slide count; these remain
-planning estimates, not observed completion times.
+Every source explanatory content module, quiz, scenario, objective, first
+complete progressive case and four learning-cycle anchors is retained. Repeated
+scaffolding remains available through Extended practice (optional), relative to
+the current upstream catalogue. Course and module IDs remain stable. Progress
+counts against the selected route, and existing completion dates are retained.
 
-The original slide layouts and interactions are unchanged. Every explanatory
-content module, quiz, scenario, objective, first complete progressive case,
-opening journey map and closing implementation commitment is retained. Four
-learning-cycle anchors remain. Repeated scaffolding and the second practice
-sequence are available through **Extended practice (optional)**.
+## Presentation improvements
 
-Course and module IDs are unchanged, so saved responses remain attached to their
-original slides. Progress is counted against the selected route rather than the
-total number of IDs saved in an older record. Completing optional work does not
-change the required completion criteria. Existing completion dates are retained.
+- A five-section learning map: Start here, Understand, Rehearse, Decide, Apply.
+- A readable, scrolling slide canvas replaces fixed-height/cropped text layouts.
+- Paragraph-based reading, reading estimates, optional depth choices, key ideas
+  and glossary disclosures, with all original reading text retained.
+- Three optional Read & try panels per course: 264 panels across the catalogue.
+  Each combines a course-specific objective/source excerpt with category-based
+  fictional professional reading and an evidence sort, sequencing exercise or
+  scenario decision with a rationale. These are not 264 wholly unique essays.
+- Practice notes save to existing course metadata, with feedback and no added
+  completion requirements. Keyboard controls and mobile section navigation
+  support the same learning format.
+- Native Academy presentation/reading controls replace duplicated legacy DOM
+  controllers on /cpd. Specialty controllers and other routes remain in place.
 
-The dedicated six-module Zones CPD course and custom/AI courses are separate
-catalogues and have not been shortened by this change. Source presentation QA
-tools continue to audit the extended catalogue; the new concise audit checks the
-shorter route without applying the old minimum-length requirements.
+The dedicated Zones CPD and custom/AI catalogues are separate and were not
+rewritten by this change.
+
+## Saving correction
+
+The Academy now updates completion only after its Supabase upsert succeeds.
+Missing sessions and save errors reject the operation; the module and optional
+practice UI show failure instead of claiming success, retaining the current
+response for retry. No database schema, permissions or authentication changes
+were made. Live authenticated database persistence has not been exercised.
 
 ## Validation
 
-- All 88 courses pass the concise integrity audit, including unchanged content,
-  assessments, module types, first case, stable IDs and legacy progress counts.
-- The platform audit passes: 78 routes, no warnings or failures.
-- Standalone TypeScript checking passes.
-- The production bundle compiles locally. The subsequent Next.js worker cannot
-  start in this Windows environment (`spawn EPERM`), so a full local production
-  build is unverified. GitHub CI runs the normal build and both audits.
+- All 88 courses pass the integrity audit: stable IDs, unchanged core content and
+  assessments, valid five-section boundaries, three complete optional panels
+  per course, and lossless paragraph conversion.
+- Platform audit: 78 routes, no warnings or failures.
+- Standalone TypeScript checking passes against the latest pinned dependency.
+- Isolated React preview verified at mobile and desktop widths: scrolling,
+  reading disclosures, evidence feedback, note save success/failure, failed
+  completion feedback, sequencing panel and presentation mode controls.
+- A conflicting legacy mobile sidebar rule was found and corrected during
+  visual checking. Browser verification used the in-app browser after the
+  agent-browser helper could not create its socket directory.
+- Production compilation previously succeeded, but the Next.js build worker
+  cannot start in this Windows sandbox (spawn EPERM). Full production build
+  and the authenticated integrated app remain unverified locally; CI runs the
+  normal build and audits.
 
-## Other review finding
-
-`app/cpd/page.tsx` updates progress optimistically before the Supabase save and
-does not roll back when it fails. `ModuleViewer.finish` then unconditionally says
-“Saved to your CPD record.” An unsuccessful save can therefore look successful
-until the page is reloaded. This existing issue is outside the course-shortening
-change and should be addressed separately by returning the save result and
-showing completion only after persistence succeeds.
-
-The review covers the source and generated catalogue. Authenticated live usage,
-school permissions, payments and actual learner timings were not exercised.
+The Next.js and React skills guided native component boundaries and controls.
+Supabase guidance was used for save-error handling. No production deployment,
+school permissions, payments or observed learner timing were tested.

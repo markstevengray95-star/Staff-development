@@ -1,9 +1,7 @@
 import type { ReactNode } from "react";
 import DevelopmentDock from "teaching-cpd/app/components/DevelopmentDock";
 import AppShellEnhancements from "teaching-cpd/app/components/AppShellEnhancements";
-import CoursePresentationController from "teaching-cpd/app/components/CoursePresentationController";
 import CourseDeepLinkController from "teaching-cpd/app/components/CourseDeepLinkController";
-import CourseInteractivityController from "teaching-cpd/app/components/CourseInteractivityController";
 import CpdZonesShortcuts from "../components/CpdZonesShortcuts";
 import AdminSlideUnlockController from "../components/AdminSlideUnlockController";
 import "teaching-cpd/app/globals.css";
@@ -51,14 +49,13 @@ import "teaching-cpd/app/course-slide-formatting.css";
 import "./zones-cpd-theme.css";
 import "./zones-cpd-deck.css";
 import "./cpd-zones-shortcuts.css";
+import "./course-learning-layout.css";
 
 export default function CpdLayout({ children }: { children: ReactNode }) {
   return <>
     <AppShellEnhancements />
-    <CoursePresentationController />
     <AdminSlideUnlockController />
     <CourseDeepLinkController />
-    <CourseInteractivityController />
     <CpdZonesShortcuts />
     <div id="main-content">{children}</div>
     <DevelopmentDock />
