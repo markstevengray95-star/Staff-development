@@ -14,7 +14,7 @@
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-qr-code": "2.2.0",
-    "teaching-cpd": "github:markstevengray95-star/teaching-cpd#02d5e296fd1db918270313e97e86df78e46f3517"
+    "teaching-cpd": "github:markstevengray95-star/teaching-cpd#48f9ee3030817c4d0212cb2ee5bb826163a52dab"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
