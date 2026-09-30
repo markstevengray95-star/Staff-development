@@ -10,7 +10,14 @@ import {
   courseFinalQaAudit as sourceCourseFinalQaAudit,
   courseFinalQaSummary as sourceCourseFinalQaSummary,
   coursePresentationOverhaulPhase1Audit as sourcePresentationOverhaulPhase1Audit,
+  courseProfessionalReadingPhase2Audit as sourceProfessionalReadingPhase2Audit,
   auditPresentationOverhaulPhase1 as sourceAuditPresentationOverhaulPhase1,
+  auditProfessionalReadingPhase2 as sourceAuditProfessionalReadingPhase2,
+  getProfessionalReadingPhase2Pack as sourceGetProfessionalReadingPhase2Pack,
+  isProfessionalReadingPhase2Module as sourceIsProfessionalReadingPhase2Module,
+  countProfessionalReadingWords as sourceCountProfessionalReadingWords,
+  PHASE2_READING_DEPTHS as sourcePhase2ReadingDepths,
+  PRESENTATION_OVERHAUL_PHASE2_VERSION as sourcePresentationOverhaulPhase2Version,
   PRESENTATION_LEARNING_CYCLE as sourcePresentationLearningCycle,
   PRESENTATION_OVERHAUL_PHASE1_VERSION as sourcePresentationOverhaulPhase1Version,
   auditCourseFinalQaPhase8 as sourceAuditCourseFinalQaPhase8,
@@ -32,6 +39,10 @@ import type {
   Phase7FacilitatorPlan,
   Phase8Check,
   Phase8CourseAudit,
+  Phase2ReadingDepth,
+  Phase2ReadingPack,
+  Phase2GlossaryItem,
+  Phase2ReadingSection,
 } from "teaching-cpd/lib/catalogue";
 
 export { categoryOrder, COURSE_TEMPLATE_STAGES, COURSE_TEMPLATE_VERSION };
@@ -45,12 +56,15 @@ export const courseFacilitatorAudit = sourceCourseFacilitatorAudit;
 export const courseFinalQaAudit = sourceCourseFinalQaAudit;
 export const courseFinalQaSummary = sourceCourseFinalQaSummary;
 export const coursePresentationOverhaulPhase1Audit = sourcePresentationOverhaulPhase1Audit;
+export const courseProfessionalReadingPhase2Audit = sourceProfessionalReadingPhase2Audit;
 export const PRESENTATION_LEARNING_CYCLE = sourcePresentationLearningCycle;
 export const PRESENTATION_OVERHAUL_PHASE1_VERSION = sourcePresentationOverhaulPhase1Version;
+export const PRESENTATION_OVERHAUL_PHASE2_VERSION = sourcePresentationOverhaulPhase2Version;
+export const PHASE2_READING_DEPTHS = sourcePhase2ReadingDepths;
 export const getPhase6RetrievalQuestions = sourceGetPhase6RetrievalQuestions;
 export const PHASE6_REVIEW_STAGES = sourcePhase6ReviewStages;
 export const PHASE7_SESSION_ROUTES = sourcePhase7SessionRoutes;
-export type { Role, CourseCategory, Phase7RouteMinutes, Phase7SlideGuide, Phase7FacilitatorPlan, Phase8Check, Phase8CourseAudit };
+export type { Role, CourseCategory, Phase7RouteMinutes, Phase7SlideGuide, Phase7FacilitatorPlan, Phase8Check, Phase8CourseAudit, Phase2ReadingDepth, Phase2ReadingPack, Phase2GlossaryItem, Phase2ReadingSection };
 export type Module = CourseModule;
 
 export type CourseModule = SourceModule & {
@@ -143,3 +157,17 @@ export function auditCourseFinalQaPhase8(course: Course) {
 export function auditPresentationOverhaulPhase1(course: Course) {
   return sourceAuditPresentationOverhaulPhase1(course as unknown as SourceCourse);
 }
+
+export function auditProfessionalReadingPhase2(course: Course) {
+  return sourceAuditProfessionalReadingPhase2(course as unknown as SourceCourse);
+}
+
+export function getProfessionalReadingPhase2Pack(course: Course, moduleOrId: CourseModule | string) {
+  return sourceGetProfessionalReadingPhase2Pack(course as unknown as SourceCourse, moduleOrId as unknown as SourceModule | string);
+}
+
+export function isProfessionalReadingPhase2Module(module: CourseModule | undefined) {
+  return sourceIsProfessionalReadingPhase2Module(module as unknown as SourceModule | undefined);
+}
+
+export const countProfessionalReadingWords = sourceCountProfessionalReadingWords;
