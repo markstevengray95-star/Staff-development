@@ -26,6 +26,9 @@ import CourseExpertChallengesPhase24Controller from "teaching-cpd/app/components
 import CourseInteractiveModelsPhase25Controller from "teaching-cpd/app/components/CourseInteractiveModelsPhase25Controller";
 import CourseVideoDecisionPointsPhase26Controller from "teaching-cpd/app/components/CourseVideoDecisionPointsPhase26Controller";
 import CourseAudioProfessionalScenariosPhase27Controller from "teaching-cpd/app/components/CourseAudioProfessionalScenariosPhase27Controller";
+import CoursePersonalisedEntryPhase28Controller from "teaching-cpd/app/components/CoursePersonalisedEntryPhase28Controller";
+import CourseProfessionalToolkitPhase29Controller from "teaching-cpd/app/components/CourseProfessionalToolkitPhase29Controller";
+import CourseImplementationChallengePhase30Controller from "teaching-cpd/app/components/CourseImplementationChallengePhase30Controller";
 import CourseInteractivityController from "teaching-cpd/app/components/CourseInteractivityController";
 import AccessGate from "./components/AccessGate";
 import CpdNavigationBridge from "./components/CpdNavigationBridge";
@@ -67,6 +70,9 @@ import "teaching-cpd/app/course-expert-challenges-phase24.css";
 import "teaching-cpd/app/course-interactive-models-phase25.css";
 import "teaching-cpd/app/course-video-decision-phase26.css";
 import "teaching-cpd/app/course-audio-scenarios-phase27.css";
+import "teaching-cpd/app/course-personalised-entry-phase28.css";
+import "teaching-cpd/app/course-professional-toolkit-phase29.css";
+import "teaching-cpd/app/course-implementation-challenge-phase30.css";
 import "teaching-cpd/app/five-feature-suite.css";
 import "teaching-cpd/app/ai-platform.css";
 import "teaching-cpd/app/impact.css";
@@ -108,6 +114,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <CourseInteractiveModelsPhase25Controller />
         <CourseVideoDecisionPointsPhase26Controller />
         <CourseAudioProfessionalScenariosPhase27Controller />
+        <CoursePersonalisedEntryPhase28Controller />
+        <CourseProfessionalToolkitPhase29Controller />
+        <CourseImplementationChallengePhase30Controller />
         <CourseInteractivityController />
         <CpdNavigationBridge />
         <DevelopmentFeatureNav />
