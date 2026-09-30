@@ -17,9 +17,11 @@ import ZonesQuickAccess from "./components/ZonesQuickAccess";
 import ZonesSidebarBridge from "./components/ZonesSidebarBridge";
 import CourseAssessmentPhase5Sync from "./components/CourseAssessmentPhase5Sync";
 import DevelopmentFeatureNav from "./components/DevelopmentFeatureNav";
+import HomeNavigationSimplifier from "./components/HomeNavigationSimplifier";
 import "./globals.css";
 import "./zones-experience.css";
 import "./development-feature-nav.css";
+import "./home-navigation-simplifier.css";
 import "./school-workflows.css";
 import "teaching-cpd/app/course-presentation-player.css";
 import "teaching-cpd/app/course-slide-formatting.css";
@@ -61,6 +63,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <CourseInteractivityController />
         <CpdNavigationBridge />
         <DevelopmentFeatureNav />
+        <HomeNavigationSimplifier />
         <ZonesQuickAccess />
         <ZonesSidebarBridge />
         <AccessGate>{children}</AccessGate>
