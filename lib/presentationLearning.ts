@@ -2,6 +2,11 @@ import type { Course, Module } from "teaching-cpd/lib/data";
 
 export type LearningSection = { id: string; title: string; purpose: string; start: number; end: number };
 export function courseSections(course: Course): LearningSection[] {
+  if (course.id.startsWith("short-")) return [
+    { id: "short-learn", title: "Understand", purpose: "Read and retrieve one focused idea", start: 0, end: 2 },
+    { id: "short-rehearse", title: "Rehearse", purpose: "Choose and practise a response", start: 2, end: 4 },
+    { id: "short-apply", title: "Apply", purpose: "Check your plan and commit to practice", start: 4, end: course.modules.length },
+  ];
   const labels = [
     ["Start here", "Orientate and check your starting point"],
     ["Understand", "Read, connect and challenge the idea"],

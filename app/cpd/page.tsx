@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { categoryOrder, courses } from "@/lib/catalogue";
 import type { Course, Module } from "@/lib/catalogue";
 import { completedModuleCount } from "@/lib/conciseCourses";
 import { CourseWorkspace } from "@/app/components/CourseWorkspace";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
+import { shortCourseParents } from "@/lib/shortCourses";
+import { isAssessmentBank } from "@/lib/assessmentQuestions";
 
 type ProgressItem = { completedModules: string[]; reflections: Record<string, string>; completedAt?: string };
 type ProgressState = Record<string, ProgressItem>;
@@ -19,8 +21,16 @@ export default function FullCpdLibrary() {
   const [view, setView] = useState<View>("library");
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
+  const [length, setLength] = useState("All");
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [progress, setProgress] = useState<ProgressState>({});
+  const progressRef = useRef<ProgressState>({});
+  const writeQueue = useRef<Promise<void>>(Promise.resolve());
+  function enqueueWrite(task: () => Promise<void>) {
+    const next = writeQueue.current.then(task);
+    writeQueue.current = next.catch(() => {});
+    return next;
+  }
   const [userId, setUserId] = useState("");
   const [displayName, setDisplayName] = useState("Staff member");
   const [platformAdmin, setPlatformAdmin] = useState(false);
@@ -68,6 +78,7 @@ export default function FullCpdLibrary() {
       setAllAccess(isAdmin || hasAllCpd || planIncludesAllCpd);
       setSingleCourseIds(singles);
       setProgress(state);
+      progressRef.current = state;
       setReady(true);
     })().catch((error) => {
       console.error(error);
@@ -82,8 +93,9 @@ export default function FullCpdLibrary() {
   const filtered = useMemo(() => courses.filter((course) => {
     const matchesCategory = category === "All" || course.category === category;
     const haystack = `${course.title} ${course.summary} ${course.category} ${course.recommendedFor.join(" ")}`.toLowerCase();
-    return matchesCategory && haystack.includes(search.toLowerCase());
-  }), [search, category]);
+    const matchesLength = length === "All" || (length === "Short" ? course.duration <= 20 : course.duration === Number(length));
+    return matchesCategory && matchesLength && haystack.includes(search.toLowerCase());
+  }), [search, category, length]);
 
   const completed = useMemo(() => courses.filter((course) => isCourseComplete(course, progress[course.id])), [progress]);
   const active = useMemo(() => courses.filter((course) => {
@@ -92,7 +104,7 @@ export default function FullCpdLibrary() {
   }), [progress]);
 
   function canOpen(course: Course) {
-    return allAccess || course.id === FREE_COURSE_ID || singleCourseIds.includes(course.id);
+    return allAccess || course.id === FREE_COURSE_ID || singleCourseIds.includes(course.id) || singleCourseIds.includes(shortCourseParents[course.id]);
   }
 
   function openCourse(course: Course) {
@@ -109,10 +121,14 @@ export default function FullCpdLibrary() {
   }
 
   async function completeModule(course: Course, module: Module, reflection?: string) {
+    return enqueueWrite(() => persistModule(course, module, reflection));
+  }
+
+  async function persistModule(course: Course, module: Module, reflection?: string) {
     if (!userId) throw new Error("Sign in to save your course progress.");
-    const current = progress[course.id] || { completedModules: [], reflections: {} };
+    const current = progressRef.current[course.id] || { completedModules: [], reflections: {} };
     const completedModules = current.completedModules.includes(module.id) ? current.completedModules : [...current.completedModules, module.id];
-    const reflections = reflection === undefined ? current.reflections : { ...current.reflections, [module.id]: reflection };
+    const reflections = reflection === undefined ? current.reflections : { ...current.reflections, [module.id]: reflection, ...(isAssessmentBank(module) ? { [`phase5:${module.id.split("-").at(-1)}`]: reflection } : {}) };
     const requiredCourse = courses.find(item => item.id === course.id) || course;
     const finished = requiredCourse.modules.every((item) => completedModules.includes(item.id));
     const next: ProgressItem = {
@@ -129,13 +145,18 @@ export default function FullCpdLibrary() {
       updated_at: new Date().toISOString(),
     }, { onConflict: "user_id,course_id" });
     if (error) { flash(`Could not save CPD progress: ${error.message}`); throw error; }
+    progressRef.current = { ...progressRef.current, [course.id]: next };
     setProgress((previous) => ({ ...previous, [course.id]: next }));
     flash(finished ? "Course complete — your CPD record has been updated." : "Progress saved to your CPD record.");
   }
 
   async function saveCourseMeta(course: Course, key: string, value: string) {
+    return enqueueWrite(() => persistCourseMeta(course, key, value));
+  }
+
+  async function persistCourseMeta(course: Course, key: string, value: string) {
     if (!userId) throw new Error("Sign in to save your course notes.");
-    const current = progress[course.id] || { completedModules: [], reflections: {} };
+    const current = progressRef.current[course.id] || { completedModules: [], reflections: {} };
     const next = { ...current, reflections: { ...current.reflections, [key]: value } };
     const { error } = await getSupabaseBrowserClient().from("staff_development_course_progress").upsert({
       user_id: userId,
@@ -146,6 +167,7 @@ export default function FullCpdLibrary() {
       updated_at: new Date().toISOString(),
     }, { onConflict: "user_id,course_id" });
     if (error) { flash(`Could not save course notes: ${error.message}`); throw error; }
+    progressRef.current = { ...progressRef.current, [course.id]: next };
     setProgress((previous) => ({ ...previous, [course.id]: next }));
   }
 
@@ -175,7 +197,8 @@ export default function FullCpdLibrary() {
           <section className="pageTitle"><div><span className="eyebrow">COMPLETE CPD ACADEMY</span><h1>Professional learning built for practice.</h1><p>The full CPD app is now part of Staff Development: detailed reading, presentations, visuals, scenarios, knowledge checks, practice, Course Lab and implementation activities.</p></div></section>
           <section className="statGrid"><Stat value={String(courses.length)} label="Courses" sub="full catalogue" /><Stat value={String(completed.length)} label="Completed" sub="on your record" /><Stat value={String(active.length)} label="In progress" sub="continue learning" /><Stat value={allAccess ? "Full" : "1 + owned"} label="Access" sub={platformAdmin ? "admin unlocked" : "your current plan"} /></section>
           <div className="filters"><input className="search" placeholder="Search courses, topics or roles…" value={search} onChange={(event) => setSearch(event.target.value)} /><div className="chips"><button className={category === "All" ? "chip active" : "chip"} onClick={() => setCategory("All")}>All</button>{categoryOrder.map((item) => <button key={item} className={category === item ? "chip active" : "chip"} onClick={() => setCategory(item)}>{item}</button>)}</div></div>
-          <div className="libraryMeta"><strong>{filtered.length} courses</strong><span>Latest CPD presentation build · cloud-saved progress</span></div>
+          <div className="courseLengthFilter"><label>Planned course length <select value={length} onChange={e => setLength(e.target.value)}><option value="All">All lengths</option><option value="Short">Short courses · 15–20 minutes</option>{[45, 60, 75, 90].map(m => <option key={m} value={m}>{m} minutes</option>)}</select></label><p>15 linked short courses, plus core routes from 45 to 90 minutes. Timings are guided pacing budgets, not observed completion times; optional extensions add time.</p></div>
+          <div className="libraryMeta"><strong>{filtered.length} courses</strong><span>Choose a focused refresher or a fuller course · cloud-saved progress</span></div>
           <div className="cardGrid">{filtered.map((course) => <LibraryCard key={course.id} course={course} state={progress[course.id]} locked={!canOpen(course)} free={course.id === FREE_COURSE_ID && !allAccess} onClick={() => openCourse(course)} />)}</div>
         </>}
 
