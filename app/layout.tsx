@@ -29,6 +29,7 @@ import CourseAudioProfessionalScenariosPhase27Controller from "teaching-cpd/app/
 import CoursePersonalisedEntryPhase28Controller from "teaching-cpd/app/components/CoursePersonalisedEntryPhase28Controller";
 import CourseProfessionalToolkitPhase29Controller from "teaching-cpd/app/components/CourseProfessionalToolkitPhase29Controller";
 import CourseImplementationChallengePhase30Controller from "teaching-cpd/app/components/CourseImplementationChallengePhase30Controller";
+import CourseCertificationExamPhase31Controller from "teaching-cpd/app/components/CourseCertificationExamPhase31Controller";
 import CourseInteractivityController from "teaching-cpd/app/components/CourseInteractivityController";
 import AccessGate from "./components/AccessGate";
 import CpdNavigationBridge from "./components/CpdNavigationBridge";
@@ -73,6 +74,7 @@ import "teaching-cpd/app/course-audio-scenarios-phase27.css";
 import "teaching-cpd/app/course-personalised-entry-phase28.css";
 import "teaching-cpd/app/course-professional-toolkit-phase29.css";
 import "teaching-cpd/app/course-implementation-challenge-phase30.css";
+import "teaching-cpd/app/course-certification-exam-phase31.css";
 import "teaching-cpd/app/five-feature-suite.css";
 import "teaching-cpd/app/ai-platform.css";
 import "teaching-cpd/app/impact.css";
@@ -117,6 +119,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <CoursePersonalisedEntryPhase28Controller />
         <CourseProfessionalToolkitPhase29Controller />
         <CourseImplementationChallengePhase30Controller />
+        <CourseCertificationExamPhase31Controller />
         <CourseInteractivityController />
         <CpdNavigationBridge />
         <DevelopmentFeatureNav />
