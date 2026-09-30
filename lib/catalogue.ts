@@ -9,6 +9,10 @@ import {
   courseFacilitatorAudit as sourceCourseFacilitatorAudit,
   courseFinalQaAudit as sourceCourseFinalQaAudit,
   courseFinalQaSummary as sourceCourseFinalQaSummary,
+  coursePresentationOverhaulPhase1Audit as sourcePresentationOverhaulPhase1Audit,
+  auditPresentationOverhaulPhase1 as sourceAuditPresentationOverhaulPhase1,
+  PRESENTATION_LEARNING_CYCLE as sourcePresentationLearningCycle,
+  PRESENTATION_OVERHAUL_PHASE1_VERSION as sourcePresentationOverhaulPhase1Version,
   auditCourseFinalQaPhase8 as sourceAuditCourseFinalQaPhase8,
   getPhase6RetrievalQuestions as sourceGetPhase6RetrievalQuestions,
   PHASE6_REVIEW_STAGES as sourcePhase6ReviewStages,
@@ -40,6 +44,9 @@ export const courseFollowThroughAudit = sourceCourseFollowThroughAudit;
 export const courseFacilitatorAudit = sourceCourseFacilitatorAudit;
 export const courseFinalQaAudit = sourceCourseFinalQaAudit;
 export const courseFinalQaSummary = sourceCourseFinalQaSummary;
+export const coursePresentationOverhaulPhase1Audit = sourcePresentationOverhaulPhase1Audit;
+export const PRESENTATION_LEARNING_CYCLE = sourcePresentationLearningCycle;
+export const PRESENTATION_OVERHAUL_PHASE1_VERSION = sourcePresentationOverhaulPhase1Version;
 export const getPhase6RetrievalQuestions = sourceGetPhase6RetrievalQuestions;
 export const PHASE6_REVIEW_STAGES = sourcePhase6ReviewStages;
 export const PHASE7_SESSION_ROUTES = sourcePhase7SessionRoutes;
@@ -131,4 +138,8 @@ export function getPhase7SlideGuide(course: Course, module: CourseModule, routeM
 
 export function auditCourseFinalQaPhase8(course: Course) {
   return sourceAuditCourseFinalQaPhase8(course as unknown as SourceCourse);
+}
+
+export function auditPresentationOverhaulPhase1(course: Course) {
+  return sourceAuditPresentationOverhaulPhase1(course as unknown as SourceCourse);
 }
