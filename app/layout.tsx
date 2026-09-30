@@ -21,6 +21,9 @@ import CourseStaffVsAiPhase19Controller from "teaching-cpd/app/components/Course
 import CourseMeaningfulXpPhase20Controller from "teaching-cpd/app/components/CourseMeaningfulXpPhase20Controller";
 import CourseProfessionalMilestonesPhase21Controller from "teaching-cpd/app/components/CourseProfessionalMilestonesPhase21Controller";
 import CourseTeamChallengesPhase22Controller from "teaching-cpd/app/components/CourseTeamChallengesPhase22Controller";
+import CourseLiveTeamQuizPhase23Controller from "teaching-cpd/app/components/CourseLiveTeamQuizPhase23Controller";
+import CourseExpertChallengesPhase24Controller from "teaching-cpd/app/components/CourseExpertChallengesPhase24Controller";
+import CourseInteractiveModelsPhase25Controller from "teaching-cpd/app/components/CourseInteractiveModelsPhase25Controller";
 import CourseInteractivityController from "teaching-cpd/app/components/CourseInteractivityController";
 import AccessGate from "./components/AccessGate";
 import CpdNavigationBridge from "./components/CpdNavigationBridge";
@@ -57,6 +60,9 @@ import "teaching-cpd/app/course-staff-vs-ai-phase19.css";
 import "teaching-cpd/app/course-meaningful-xp-phase20.css";
 import "teaching-cpd/app/course-professional-milestones-phase21.css";
 import "teaching-cpd/app/course-team-challenges-phase22.css";
+import "teaching-cpd/app/course-live-team-quiz-phase23.css";
+import "teaching-cpd/app/course-expert-challenges-phase24.css";
+import "teaching-cpd/app/course-interactive-models-phase25.css";
 import "teaching-cpd/app/five-feature-suite.css";
 import "teaching-cpd/app/ai-platform.css";
 import "teaching-cpd/app/impact.css";
@@ -93,6 +99,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <CourseMeaningfulXpPhase20Controller />
         <CourseProfessionalMilestonesPhase21Controller />
         <CourseTeamChallengesPhase22Controller />
+        <CourseLiveTeamQuizPhase23Controller />
+        <CourseExpertChallengesPhase24Controller />
+        <CourseInteractiveModelsPhase25Controller />
         <CourseInteractivityController />
         <CpdNavigationBridge />
         <DevelopmentFeatureNav />
