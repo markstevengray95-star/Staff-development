@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { categoryOrder, courses } from "teaching-cpd/lib/catalogue";
-import type { Course, Module } from "teaching-cpd/lib/data";
+import { categoryOrder, courses, extendedCourses } from "@/lib/catalogue";
+import type { Course, Module } from "@/lib/catalogue";
+import { completedModuleCount } from "@/lib/conciseCourses";
 import CourseLab from "teaching-cpd/app/components/CourseLab";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 
@@ -112,7 +113,8 @@ export default function FullCpdLibrary() {
     const current = progress[course.id] || { completedModules: [], reflections: {} };
     const completedModules = current.completedModules.includes(module.id) ? current.completedModules : [...current.completedModules, module.id];
     const reflections = reflection === undefined ? current.reflections : { ...current.reflections, [module.id]: reflection };
-    const finished = course.modules.every((item) => completedModules.includes(item.id));
+    const requiredCourse = courses.find(item => item.id === course.id) || course;
+    const finished = requiredCourse.modules.every((item) => completedModules.includes(item.id));
     const next: ProgressItem = {
       completedModules,
       reflections,
@@ -194,19 +196,29 @@ export default function FullCpdLibrary() {
   </div>;
 }
 
-function CourseWorkspace({ course, state, onClose, onComplete, onSaveMeta, onOpenCourse }: { course: Course; state?: ProgressItem; onClose: () => void; onComplete: (course: Course, module: Module, reflection?: string) => Promise<void>; onSaveMeta: (key: string, value: string) => Promise<void>; onOpenCourse: (course: Course) => void }) {
+function CourseWorkspace({ course: concise, state, onClose, onComplete, onSaveMeta, onOpenCourse }: { course: Course; state?: ProgressItem; onClose: () => void; onComplete: (course: Course, module: Module, reflection?: string) => Promise<void>; onSaveMeta: (key: string, value: string) => Promise<void>; onOpenCourse: (course: Course) => void }) {
+  const [extended, setExtended] = useState(false);
+  const course = extended ? extendedCourses.find(item => item.id === concise.id) || concise : concise;
   const completed = state?.completedModules || [];
   const firstIncomplete = course.modules.findIndex((module) => !completed.includes(module.id));
   const [index, setIndex] = useState(firstIncomplete < 0 ? 0 : firstIncomplete);
   const [showLab, setShowLab] = useState(false);
   const module = course.modules[index];
-  const percent = state?.completedAt ? 100 : Math.round((completed.length / course.modules.length) * 100);
+  const done = completedModuleCount(course, completed);
+  const percent = !extended && state?.completedAt ? 100 : Math.round((done / course.modules.length) * 100);
+
+  function toggleExtended() {
+    const nextCourse = extended ? concise : extendedCourses.find(item => item.id === concise.id) || concise;
+    const nextIndex = nextCourse.modules.findIndex(item => item.id === module.id);
+    setIndex(nextIndex < 0 ? 0 : nextIndex);
+    setExtended(value => !value);
+  }
 
   return <div className="modalBackdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
     <section className={`courseModal ${showLab ? "labMode" : ""}`}>
-      <header className="courseModalHead"><div><span className="eyebrow">{course.category} · {course.level} · {course.duration} MIN</span><h2>{course.title}</h2></div><div className="courseModalHeadActions"><button className={showLab ? "primary courseLabToggle" : "secondary courseLabToggle"} onClick={() => setShowLab((value) => !value)}>{showLab ? "Back to modules" : "Open Course Lab"}</button><button className="iconButton" aria-label="Close course" onClick={onClose}>×</button></div></header>
-      <div className="courseProgress"><div><span>{completed.length} of {course.modules.length} modules complete</span><strong>{percent}%</strong></div><div className="progress"><span style={{ width: `${percent}%` }} /></div></div>
-      {showLab ? <div className="courseLabViewport"><CourseLab course={course} allCourses={courses} savedMeta={state?.reflections || {}} completedCount={state?.completedAt ? course.modules.length : completed.length} totalModules={course.modules.length} onSaveMeta={onSaveMeta} onOpenCourse={onOpenCourse} /></div> : <div className="moduleLayout">
+      <header className="courseModalHead"><div><span className="eyebrow">{course.category} · {course.level} · {course.duration} MIN ESTIMATE · {extended ? "EXTENDED" : "CONCISE"}</span><h2>{course.title}</h2></div><div className="courseModalHeadActions"><button className="secondary" aria-pressed={extended} onClick={toggleExtended}>{extended ? "Return to concise course" : "Extended practice (optional)"}</button><button className={showLab ? "primary courseLabToggle" : "secondary courseLabToggle"} onClick={() => setShowLab((value) => !value)}>{showLab ? "Back to modules" : "Open Course Lab"}</button><button className="iconButton" aria-label="Close course" onClick={onClose}>×</button></div></header>
+      <div className="courseProgress"><div><span>{done} of {course.modules.length} modules complete</span><strong>{percent}%</strong></div><div className="progress"><span style={{ width: `${percent}%` }} /></div></div>
+      {showLab ? <div className="courseLabViewport"><CourseLab course={course} allCourses={courses} savedMeta={state?.reflections || {}} completedCount={done} totalModules={course.modules.length} onSaveMeta={onSaveMeta} onOpenCourse={item => { const target = courses.find(candidate => candidate.id === item.id); if (target) onOpenCourse(target); }} /></div> : <div className="moduleLayout">
         <aside className="moduleNav">{course.modules.map((item, itemIndex) => <button key={item.id} className={`${itemIndex === index ? "current" : ""} ${completed.includes(item.id) ? "done" : ""}`} onClick={() => setIndex(itemIndex)}><span>{completed.includes(item.id) ? "✓" : itemIndex + 1}</span><div><strong>{item.title}</strong><small>{item.type}</small></div></button>)}</aside>
         <ModuleViewer course={course} module={module} completed={completed.includes(module.id)} savedResponse={state?.reflections[module.id] || ""} onComplete={onComplete} onPrevious={() => setIndex((value) => Math.max(0, value - 1))} onNext={() => setIndex((value) => Math.min(course.modules.length - 1, value + 1))} index={index} total={course.modules.length} />
       </div>}
@@ -249,7 +261,7 @@ function ModuleViewer({ course, module, completed, savedResponse, onComplete, on
 }
 
 function LibraryCard({ course, state, locked, free, onClick }: { course: Course; state?: ProgressItem; locked: boolean; free?: boolean; onClick: () => void }) {
-  const done = state?.completedModules.length || 0;
+  const done = completedModuleCount(course, state?.completedModules || []);
   const percent = state?.completedAt ? 100 : Math.round((done / course.modules.length) * 100);
   return <button className="courseCard" onClick={onClick} style={{ textAlign: "left", cursor: "pointer", position: "relative" }}><div className="courseCardTop"><span className="categoryTag">{course.category}</span><span className="levelBadge">{course.level}</span></div><h3>{course.title}</h3><p>{course.summary}</p><div className="courseMeta"><span>{course.duration} min</span><span>{course.modules.length} modules</span>{free && <span>Included</span>}{locked && <span>🔒 Locked</span>}</div><div className="progress"><span style={{ width: `${percent}%` }} /></div><small>{state?.completedAt ? "Completed" : done ? `${done}/${course.modules.length} complete` : locked ? "View access options" : "Ready to start"}</small></button>;
 }

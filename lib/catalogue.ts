@@ -111,6 +111,7 @@ import type {
   Phase12SimulationPack,
   Phase11to12Audit,
 } from "teaching-cpd/lib/catalogue";
+import { conciseCourse } from "./conciseCourses";
 
 export { categoryOrder, COURSE_TEMPLATE_STAGES, COURSE_TEMPLATE_VERSION };
 export const categories = categoryOrder;
@@ -213,7 +214,7 @@ function moduleReflection(module: SourceModule): string {
 }
 
 function adaptCourse(course: SourceCourse): Course {
-  const minutes = Math.max(5, Math.round(course.duration / Math.max(1, course.modules.length)));
+  const minutes = Math.max(1, Math.round(course.duration / Math.max(1, course.modules.length)));
   return {
     ...course,
     audience: course.recommendedFor.join(", ") || "All staff",
@@ -229,7 +230,8 @@ function adaptCourse(course: SourceCourse): Course {
   };
 }
 
-export const courses: Course[] = sourceCourses.map(adaptCourse);
+export const courses: Course[] = sourceCourses.map(conciseCourse).map(adaptCourse);
+export const extendedCourses: Course[] = sourceCourses.map(adaptCourse);
 
 export function getPhase7FacilitatorPlan(course: Course, routeMinutes: Phase7RouteMinutes = 60) {
   return sourceGetPhase7FacilitatorPlan(course as unknown as SourceCourse, routeMinutes);
