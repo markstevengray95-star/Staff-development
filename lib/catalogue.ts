@@ -11,13 +11,19 @@ import {
   courseFinalQaSummary as sourceCourseFinalQaSummary,
   coursePresentationOverhaulPhase1Audit as sourcePresentationOverhaulPhase1Audit,
   courseProfessionalReadingPhase2Audit as sourceProfessionalReadingPhase2Audit,
+  courseWorkshopActivityPhase3Audit as sourceWorkshopActivityPhase3Audit,
   auditPresentationOverhaulPhase1 as sourceAuditPresentationOverhaulPhase1,
   auditProfessionalReadingPhase2 as sourceAuditProfessionalReadingPhase2,
+  auditWorkshopActivityPhase3 as sourceAuditWorkshopActivityPhase3,
   getProfessionalReadingPhase2Pack as sourceGetProfessionalReadingPhase2Pack,
   isProfessionalReadingPhase2Module as sourceIsProfessionalReadingPhase2Module,
   countProfessionalReadingWords as sourceCountProfessionalReadingWords,
   PHASE2_READING_DEPTHS as sourcePhase2ReadingDepths,
   PRESENTATION_OVERHAUL_PHASE2_VERSION as sourcePresentationOverhaulPhase2Version,
+  getWorkshopActivityPhase3Pack as sourceGetWorkshopActivityPhase3Pack,
+  isWorkshopActivityPhase3Module as sourceIsWorkshopActivityPhase3Module,
+  PHASE3_WORKSHOP_KINDS as sourcePhase3WorkshopKinds,
+  PRESENTATION_OVERHAUL_PHASE3_VERSION as sourcePresentationOverhaulPhase3Version,
   PRESENTATION_LEARNING_CYCLE as sourcePresentationLearningCycle,
   PRESENTATION_OVERHAUL_PHASE1_VERSION as sourcePresentationOverhaulPhase1Version,
   auditCourseFinalQaPhase8 as sourceAuditCourseFinalQaPhase8,
@@ -43,6 +49,10 @@ import type {
   Phase2ReadingPack,
   Phase2GlossaryItem,
   Phase2ReadingSection,
+  Phase3WorkshopKind,
+  Phase3WorkshopPack,
+  Phase3WorkshopOption,
+  Phase3BranchStage,
 } from "teaching-cpd/lib/catalogue";
 
 export { categoryOrder, COURSE_TEMPLATE_STAGES, COURSE_TEMPLATE_VERSION };
@@ -57,14 +67,17 @@ export const courseFinalQaAudit = sourceCourseFinalQaAudit;
 export const courseFinalQaSummary = sourceCourseFinalQaSummary;
 export const coursePresentationOverhaulPhase1Audit = sourcePresentationOverhaulPhase1Audit;
 export const courseProfessionalReadingPhase2Audit = sourceProfessionalReadingPhase2Audit;
+export const courseWorkshopActivityPhase3Audit = sourceWorkshopActivityPhase3Audit;
 export const PRESENTATION_LEARNING_CYCLE = sourcePresentationLearningCycle;
 export const PRESENTATION_OVERHAUL_PHASE1_VERSION = sourcePresentationOverhaulPhase1Version;
 export const PRESENTATION_OVERHAUL_PHASE2_VERSION = sourcePresentationOverhaulPhase2Version;
+export const PRESENTATION_OVERHAUL_PHASE3_VERSION = sourcePresentationOverhaulPhase3Version;
 export const PHASE2_READING_DEPTHS = sourcePhase2ReadingDepths;
+export const PHASE3_WORKSHOP_KINDS = sourcePhase3WorkshopKinds;
 export const getPhase6RetrievalQuestions = sourceGetPhase6RetrievalQuestions;
 export const PHASE6_REVIEW_STAGES = sourcePhase6ReviewStages;
 export const PHASE7_SESSION_ROUTES = sourcePhase7SessionRoutes;
-export type { Role, CourseCategory, Phase7RouteMinutes, Phase7SlideGuide, Phase7FacilitatorPlan, Phase8Check, Phase8CourseAudit, Phase2ReadingDepth, Phase2ReadingPack, Phase2GlossaryItem, Phase2ReadingSection };
+export type { Role, CourseCategory, Phase7RouteMinutes, Phase7SlideGuide, Phase7FacilitatorPlan, Phase8Check, Phase8CourseAudit, Phase2ReadingDepth, Phase2ReadingPack, Phase2GlossaryItem, Phase2ReadingSection, Phase3WorkshopKind, Phase3WorkshopPack, Phase3WorkshopOption, Phase3BranchStage };
 export type Module = CourseModule;
 
 export type CourseModule = SourceModule & {
@@ -171,3 +184,15 @@ export function isProfessionalReadingPhase2Module(module: CourseModule | undefin
 }
 
 export const countProfessionalReadingWords = sourceCountProfessionalReadingWords;
+
+export function auditWorkshopActivityPhase3(course: Course) {
+  return sourceAuditWorkshopActivityPhase3(course as unknown as SourceCourse);
+}
+
+export function getWorkshopActivityPhase3Pack(course: Course, module: CourseModule | undefined | null) {
+  return sourceGetWorkshopActivityPhase3Pack(course as unknown as SourceCourse, module as unknown as SourceModule | undefined | null);
+}
+
+export function isWorkshopActivityPhase3Module(module: CourseModule | undefined | null) {
+  return sourceIsWorkshopActivityPhase3Module(module as unknown as SourceModule | undefined | null);
+}
