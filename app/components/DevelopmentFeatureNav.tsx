@@ -18,11 +18,12 @@ const workflowLinks=[
   ["/improvement/programmes","Improvement → CPD"],
   ["/live-presenter","Presenter 2.0"],
   ["/ai-course-builder","AI Course Builder"],
+  ["/presentation-overhaul-final","Presentation QA"],
 ] as const;
 
 export default function DevelopmentFeatureNav(){
   const pathname=usePathname();
-  const visible=pathname==="/"||["/dashboard","/cpd","/coach","/ai-coach","/knowledge-base","/learning-walks","/pathways","/improvement","/live","/live-presenter","/facilitator","/impact","/development","/leadership","/ai-course-builder","/builder","/appraisal","/compliance","/induction","/departments"].some(prefix=>pathname===prefix||pathname.startsWith(`${prefix}/`));
+  const visible=pathname==="/"||["/dashboard","/cpd","/coach","/ai-coach","/knowledge-base","/learning-walks","/pathways","/improvement","/live","/live-presenter","/facilitator","/impact","/development","/leadership","/ai-course-builder","/builder","/appraisal","/compliance","/induction","/departments","/presentation-overhaul-final"].some(prefix=>pathname===prefix||pathname.startsWith(`${prefix}/`));
   if(!visible)return null;
   const workflowActive=workflowLinks.some(([href])=>pathname===href||pathname.startsWith(`${href}/`));
   return <nav className="developmentFeatureNav" aria-label="Staff development tools">
