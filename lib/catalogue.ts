@@ -18,6 +18,8 @@ import {
   coursePresentationEngagementPhase6Summary as sourcePresentationEngagementPhase6Summary,
   courseFinalPresentationPhases7to10Audit as sourceFinalPresentationPhases7to10Audit,
   courseFinalPresentationPhases7to10Summary as sourceFinalPresentationPhases7to10Summary,
+  courseMissionSimulationPhases11to12Audit as sourceMissionSimulationPhases11to12Audit,
+  courseMissionSimulationPhases11to12Summary as sourceMissionSimulationPhases11to12Summary,
   auditPresentationOverhaulPhase1 as sourceAuditPresentationOverhaulPhase1,
   auditProfessionalReadingPhase2 as sourceAuditProfessionalReadingPhase2,
   auditWorkshopActivityPhase3 as sourceAuditWorkshopActivityPhase3,
@@ -25,6 +27,7 @@ import {
   auditLivePresenterPhase5 as sourceAuditLivePresenterPhase5,
   auditPresentationEngagementPhase6 as sourceAuditPresentationEngagementPhase6,
   auditFinalPresentationPhases7to10 as sourceAuditFinalPresentationPhases7to10,
+  auditMissionSimulationPhases11to12 as sourceAuditMissionSimulationPhases11to12,
   getProfessionalReadingPhase2Pack as sourceGetProfessionalReadingPhase2Pack,
   isProfessionalReadingPhase2Module as sourceIsProfessionalReadingPhase2Module,
   countProfessionalReadingWords as sourceCountProfessionalReadingWords,
@@ -51,6 +54,13 @@ import {
   PRESENTATION_OVERHAUL_PHASE8_VERSION as sourcePresentationOverhaulPhase8Version,
   PRESENTATION_OVERHAUL_PHASE9_VERSION as sourcePresentationOverhaulPhase9Version,
   PRESENTATION_OVERHAUL_PHASE10_VERSION as sourcePresentationOverhaulPhase10Version,
+  getPhase11MissionPack as sourceGetPhase11MissionPack,
+  getPhase12SimulationPack as sourceGetPhase12SimulationPack,
+  getPhase12SimulationModulePack as sourceGetPhase12SimulationModulePack,
+  isPhase11MissionModule as sourceIsPhase11MissionModule,
+  isPhase12SimulationModule as sourceIsPhase12SimulationModule,
+  PRESENTATION_OVERHAUL_PHASE11_VERSION as sourcePresentationOverhaulPhase11Version,
+  PRESENTATION_OVERHAUL_PHASE12_VERSION as sourcePresentationOverhaulPhase12Version,
   PRESENTATION_LEARNING_CYCLE as sourcePresentationLearningCycle,
   PRESENTATION_OVERHAUL_PHASE1_VERSION as sourcePresentationOverhaulPhase1Version,
   auditCourseFinalQaPhase8 as sourceAuditCourseFinalQaPhase8,
@@ -93,6 +103,13 @@ import type {
   Phase8PathRoute,
   Phase8AdaptivePack,
   FinalPresentationAudit,
+  Phase11MissionStage,
+  Phase11MissionPack,
+  Phase12MeterEffects,
+  Phase12SimulationChoice,
+  Phase12SimulationState,
+  Phase12SimulationPack,
+  Phase11to12Audit,
 } from "teaching-cpd/lib/catalogue";
 
 export { categoryOrder, COURSE_TEMPLATE_STAGES, COURSE_TEMPLATE_VERSION };
@@ -114,6 +131,8 @@ export const coursePresentationEngagementPhase6Audit = sourcePresentationEngagem
 export const coursePresentationEngagementPhase6Summary = sourcePresentationEngagementPhase6Summary;
 export const courseFinalPresentationPhases7to10Audit = sourceFinalPresentationPhases7to10Audit;
 export const courseFinalPresentationPhases7to10Summary = sourceFinalPresentationPhases7to10Summary;
+export const courseMissionSimulationPhases11to12Audit = sourceMissionSimulationPhases11to12Audit;
+export const courseMissionSimulationPhases11to12Summary = sourceMissionSimulationPhases11to12Summary;
 export const PRESENTATION_LEARNING_CYCLE = sourcePresentationLearningCycle;
 export const PRESENTATION_OVERHAUL_PHASE1_VERSION = sourcePresentationOverhaulPhase1Version;
 export const PRESENTATION_OVERHAUL_PHASE2_VERSION = sourcePresentationOverhaulPhase2Version;
@@ -125,6 +144,8 @@ export const PRESENTATION_OVERHAUL_PHASE7_VERSION = sourcePresentationOverhaulPh
 export const PRESENTATION_OVERHAUL_PHASE8_VERSION = sourcePresentationOverhaulPhase8Version;
 export const PRESENTATION_OVERHAUL_PHASE9_VERSION = sourcePresentationOverhaulPhase9Version;
 export const PRESENTATION_OVERHAUL_PHASE10_VERSION = sourcePresentationOverhaulPhase10Version;
+export const PRESENTATION_OVERHAUL_PHASE11_VERSION = sourcePresentationOverhaulPhase11Version;
+export const PRESENTATION_OVERHAUL_PHASE12_VERSION = sourcePresentationOverhaulPhase12Version;
 export const PHASE2_READING_DEPTHS = sourcePhase2ReadingDepths;
 export const PHASE3_WORKSHOP_KINDS = sourcePhase3WorkshopKinds;
 export const PHASE4_CASE_STEPS = sourcePhase4CaseSteps;
@@ -132,7 +153,7 @@ export const PHASE5_LIVE_MOMENT_KINDS = sourcePhase5LiveMomentKinds;
 export const getPhase6RetrievalQuestions = sourceGetPhase6RetrievalQuestions;
 export const PHASE6_REVIEW_STAGES = sourcePhase6ReviewStages;
 export const PHASE7_SESSION_ROUTES = sourcePhase7SessionRoutes;
-export type { Role, CourseCategory, Phase7RouteMinutes, Phase7SlideGuide, Phase7FacilitatorPlan, Phase8Check, Phase8CourseAudit, Phase2ReadingDepth, Phase2ReadingPack, Phase2GlossaryItem, Phase2ReadingSection, Phase3WorkshopKind, Phase3WorkshopPack, Phase3WorkshopOption, Phase3BranchStage, Phase4ProgressiveCasePack, Phase4ProgressiveCaseModulePack, Phase4CaseStep, Phase4CaseNumber, Phase4RoleLens, Phase4Choice, Phase5LiveMoment, Phase5LiveMomentKind, Phase6EngagementAudit, Phase6EngagementCheck, Phase8PathRoute, Phase8AdaptivePack, FinalPresentationAudit };
+export type { Role, CourseCategory, Phase7RouteMinutes, Phase7SlideGuide, Phase7FacilitatorPlan, Phase8Check, Phase8CourseAudit, Phase2ReadingDepth, Phase2ReadingPack, Phase2GlossaryItem, Phase2ReadingSection, Phase3WorkshopKind, Phase3WorkshopPack, Phase3WorkshopOption, Phase3BranchStage, Phase4ProgressiveCasePack, Phase4ProgressiveCaseModulePack, Phase4CaseStep, Phase4CaseNumber, Phase4RoleLens, Phase4Choice, Phase5LiveMoment, Phase5LiveMomentKind, Phase6EngagementAudit, Phase6EngagementCheck, Phase8PathRoute, Phase8AdaptivePack, FinalPresentationAudit, Phase11MissionStage, Phase11MissionPack, Phase12MeterEffects, Phase12SimulationChoice, Phase12SimulationState, Phase12SimulationPack, Phase11to12Audit };
 export type Module = CourseModule;
 
 export type CourseModule = SourceModule & {
@@ -296,4 +317,28 @@ export function getAdaptivePathwayPhase8Pack(course: Course, module: CourseModul
 
 export function isAdaptivePathwayPhase8Module(module: CourseModule | undefined | null) {
   return sourceIsAdaptivePathwayPhase8Module(module as unknown as SourceModule | undefined | null);
+}
+
+export function auditMissionSimulationPhases11to12(course: Course) {
+  return sourceAuditMissionSimulationPhases11to12(course as unknown as SourceCourse);
+}
+
+export function getPhase11MissionPack(course: Course) {
+  return sourceGetPhase11MissionPack(course as unknown as SourceCourse);
+}
+
+export function getPhase12SimulationPack(course: Course, simulationNumber: 1 | 2) {
+  return sourceGetPhase12SimulationPack(course as unknown as SourceCourse, simulationNumber);
+}
+
+export function getPhase12SimulationModulePack(course: Course, module: CourseModule | undefined | null) {
+  return sourceGetPhase12SimulationModulePack(course as unknown as SourceCourse, module as unknown as SourceModule | undefined | null);
+}
+
+export function isPhase11MissionModule(module: CourseModule | undefined | null) {
+  return sourceIsPhase11MissionModule(module as unknown as SourceModule | undefined | null);
+}
+
+export function isPhase12SimulationModule(module: CourseModule | undefined | null) {
+  return sourceIsPhase12SimulationModule(module as unknown as SourceModule | undefined | null);
 }
