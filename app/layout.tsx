@@ -24,6 +24,8 @@ import CourseTeamChallengesPhase22Controller from "teaching-cpd/app/components/C
 import CourseLiveTeamQuizPhase23Controller from "teaching-cpd/app/components/CourseLiveTeamQuizPhase23Controller";
 import CourseExpertChallengesPhase24Controller from "teaching-cpd/app/components/CourseExpertChallengesPhase24Controller";
 import CourseInteractiveModelsPhase25Controller from "teaching-cpd/app/components/CourseInteractiveModelsPhase25Controller";
+import CourseVideoDecisionPointsPhase26Controller from "teaching-cpd/app/components/CourseVideoDecisionPointsPhase26Controller";
+import CourseAudioProfessionalScenariosPhase27Controller from "teaching-cpd/app/components/CourseAudioProfessionalScenariosPhase27Controller";
 import CourseInteractivityController from "teaching-cpd/app/components/CourseInteractivityController";
 import AccessGate from "./components/AccessGate";
 import CpdNavigationBridge from "./components/CpdNavigationBridge";
@@ -63,6 +65,8 @@ import "teaching-cpd/app/course-team-challenges-phase22.css";
 import "teaching-cpd/app/course-live-team-quiz-phase23.css";
 import "teaching-cpd/app/course-expert-challenges-phase24.css";
 import "teaching-cpd/app/course-interactive-models-phase25.css";
+import "teaching-cpd/app/course-video-decision-phase26.css";
+import "teaching-cpd/app/course-audio-scenarios-phase27.css";
 import "teaching-cpd/app/five-feature-suite.css";
 import "teaching-cpd/app/ai-platform.css";
 import "teaching-cpd/app/impact.css";
@@ -102,6 +106,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <CourseLiveTeamQuizPhase23Controller />
         <CourseExpertChallengesPhase24Controller />
         <CourseInteractiveModelsPhase25Controller />
+        <CourseVideoDecisionPointsPhase26Controller />
+        <CourseAudioProfessionalScenariosPhase27Controller />
         <CourseInteractivityController />
         <CpdNavigationBridge />
         <DevelopmentFeatureNav />
