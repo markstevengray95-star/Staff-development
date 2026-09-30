@@ -15,6 +15,8 @@ import CourseEscapePhase13Controller from "teaching-cpd/app/components/CourseEsc
 import CourseTimedChallengePhase14Controller from "teaching-cpd/app/components/CourseTimedChallengePhase14Controller";
 import CourseSpotProblemPhase15Controller from "teaching-cpd/app/components/CourseSpotProblemPhase15Controller";
 import CourseBranchingAdventurePhase16Controller from "teaching-cpd/app/components/CourseBranchingAdventurePhase16Controller";
+import CourseMysteryInvestigationPhase17Controller from "teaching-cpd/app/components/CourseMysteryInvestigationPhase17Controller";
+import CourseBeforeAfterPhase18Controller from "teaching-cpd/app/components/CourseBeforeAfterPhase18Controller";
 import CourseInteractivityController from "teaching-cpd/app/components/CourseInteractivityController";
 import AccessGate from "./components/AccessGate";
 import CpdNavigationBridge from "./components/CpdNavigationBridge";
@@ -45,6 +47,8 @@ import "teaching-cpd/app/course-escape-phase13.css";
 import "teaching-cpd/app/course-timed-phase14.css";
 import "teaching-cpd/app/course-spot-problem-phase15.css";
 import "teaching-cpd/app/course-branching-phase16.css";
+import "teaching-cpd/app/course-mystery-phase17.css";
+import "teaching-cpd/app/course-before-after-phase18.css";
 import "teaching-cpd/app/five-feature-suite.css";
 import "teaching-cpd/app/ai-platform.css";
 import "teaching-cpd/app/impact.css";
@@ -75,6 +79,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <CourseTimedChallengePhase14Controller />
         <CourseSpotProblemPhase15Controller />
         <CourseBranchingAdventurePhase16Controller />
+        <CourseMysteryInvestigationPhase17Controller />
+        <CourseBeforeAfterPhase18Controller />
         <CourseInteractivityController />
         <CpdNavigationBridge />
         <DevelopmentFeatureNav />
