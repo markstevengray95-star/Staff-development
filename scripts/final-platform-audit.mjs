@@ -41,7 +41,7 @@ if (duplicateRoutes.length) failures.push(`Duplicate Next.js route outputs: ${[.
 const requiredRoutes = [
   "/", "/auth", "/reset-password", "/admin", "/admin-login",
   "/dashboard", "/knowledge-base", "/ai-course-builder", "/appraisal", "/compliance", "/induction", "/departments",
-  "/cpd", "/course-audit", "/course-quality-dashboard", "/presentation-engagement-audit", "/facilitator", "/impact",
+  "/cpd", "/course-audit", "/course-quality-dashboard", "/presentation-engagement-audit", "/presentation-overhaul-final", "/facilitator", "/impact",
   "/development", "/pathways", "/pathways/personal", "/adaptive", "/subject-cpd", "/reading", "/micro-cpd", "/training", "/recommendations",
   "/simulator", "/actions", "/coach", "/ai-coach", "/coaching", "/needs-audit", "/portfolio", "/standards", "/external-cpd",
   "/school-hub", "/learning-walks", "/safeguarding", "/safeguarding/documents", "/safety", "/certificates", "/reminders", "/improvement", "/improvement/programmes",
