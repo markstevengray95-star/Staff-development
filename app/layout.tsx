@@ -8,6 +8,7 @@ import CourseFacilitatorPhase7Controller from "teaching-cpd/app/components/Cours
 import CourseReadingPhase2Controller from "teaching-cpd/app/components/CourseReadingPhase2Controller";
 import CourseWorkshopPhase3Controller from "teaching-cpd/app/components/CourseWorkshopPhase3Controller";
 import CourseProgressiveCasePhase4Controller from "teaching-cpd/app/components/CourseProgressiveCasePhase4Controller";
+import CourseLivePresenterPhase5Controller from "teaching-cpd/app/components/CourseLivePresenterPhase5Controller";
 import CourseInteractivityController from "teaching-cpd/app/components/CourseInteractivityController";
 import AccessGate from "./components/AccessGate";
 import CpdNavigationBridge from "./components/CpdNavigationBridge";
@@ -29,6 +30,7 @@ import "teaching-cpd/app/phase7-facilitator.css";
 import "teaching-cpd/app/course-reading-phase2.css";
 import "teaching-cpd/app/course-workshop-phase3.css";
 import "teaching-cpd/app/course-progressive-case-phase4.css";
+import "teaching-cpd/app/course-live-presenter-phase5.css";
 import "teaching-cpd/app/five-feature-suite.css";
 import "teaching-cpd/app/ai-platform.css";
 import "teaching-cpd/app/impact.css";
@@ -52,6 +54,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <CourseReadingPhase2Controller />
         <CourseWorkshopPhase3Controller />
         <CourseProgressiveCasePhase4Controller />
+        <CourseLivePresenterPhase5Controller />
         <CourseInteractivityController />
         <CpdNavigationBridge />
         <DevelopmentFeatureNav />
