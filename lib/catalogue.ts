@@ -14,11 +14,14 @@ import {
   courseWorkshopActivityPhase3Audit as sourceWorkshopActivityPhase3Audit,
   courseProgressiveCasePhase4Audit as sourceProgressiveCasePhase4Audit,
   courseLivePresenterPhase5Audit as sourceLivePresenterPhase5Audit,
+  coursePresentationEngagementPhase6Audit as sourcePresentationEngagementPhase6Audit,
+  coursePresentationEngagementPhase6Summary as sourcePresentationEngagementPhase6Summary,
   auditPresentationOverhaulPhase1 as sourceAuditPresentationOverhaulPhase1,
   auditProfessionalReadingPhase2 as sourceAuditProfessionalReadingPhase2,
   auditWorkshopActivityPhase3 as sourceAuditWorkshopActivityPhase3,
   auditProgressiveCasePhase4 as sourceAuditProgressiveCasePhase4,
   auditLivePresenterPhase5 as sourceAuditLivePresenterPhase5,
+  auditPresentationEngagementPhase6 as sourceAuditPresentationEngagementPhase6,
   getProfessionalReadingPhase2Pack as sourceGetProfessionalReadingPhase2Pack,
   isProfessionalReadingPhase2Module as sourceIsProfessionalReadingPhase2Module,
   countProfessionalReadingWords as sourceCountProfessionalReadingWords,
@@ -38,6 +41,7 @@ import {
   phase5LiveMomentActivityType as sourcePhase5LiveMomentActivityType,
   PHASE5_LIVE_MOMENT_KINDS as sourcePhase5LiveMomentKinds,
   PRESENTATION_OVERHAUL_PHASE5_VERSION as sourcePresentationOverhaulPhase5Version,
+  PRESENTATION_OVERHAUL_PHASE6_VERSION as sourcePresentationOverhaulPhase6Version,
   PRESENTATION_LEARNING_CYCLE as sourcePresentationLearningCycle,
   PRESENTATION_OVERHAUL_PHASE1_VERSION as sourcePresentationOverhaulPhase1Version,
   auditCourseFinalQaPhase8 as sourceAuditCourseFinalQaPhase8,
@@ -75,6 +79,8 @@ import type {
   Phase4Choice,
   Phase5LiveMoment,
   Phase5LiveMomentKind,
+  Phase6EngagementAudit,
+  Phase6EngagementCheck,
 } from "teaching-cpd/lib/catalogue";
 
 export { categoryOrder, COURSE_TEMPLATE_STAGES, COURSE_TEMPLATE_VERSION };
@@ -92,12 +98,15 @@ export const courseProfessionalReadingPhase2Audit = sourceProfessionalReadingPha
 export const courseWorkshopActivityPhase3Audit = sourceWorkshopActivityPhase3Audit;
 export const courseProgressiveCasePhase4Audit = sourceProgressiveCasePhase4Audit;
 export const courseLivePresenterPhase5Audit = sourceLivePresenterPhase5Audit;
+export const coursePresentationEngagementPhase6Audit = sourcePresentationEngagementPhase6Audit;
+export const coursePresentationEngagementPhase6Summary = sourcePresentationEngagementPhase6Summary;
 export const PRESENTATION_LEARNING_CYCLE = sourcePresentationLearningCycle;
 export const PRESENTATION_OVERHAUL_PHASE1_VERSION = sourcePresentationOverhaulPhase1Version;
 export const PRESENTATION_OVERHAUL_PHASE2_VERSION = sourcePresentationOverhaulPhase2Version;
 export const PRESENTATION_OVERHAUL_PHASE3_VERSION = sourcePresentationOverhaulPhase3Version;
 export const PRESENTATION_OVERHAUL_PHASE4_VERSION = sourcePresentationOverhaulPhase4Version;
 export const PRESENTATION_OVERHAUL_PHASE5_VERSION = sourcePresentationOverhaulPhase5Version;
+export const PRESENTATION_OVERHAUL_PHASE6_VERSION = sourcePresentationOverhaulPhase6Version;
 export const PHASE2_READING_DEPTHS = sourcePhase2ReadingDepths;
 export const PHASE3_WORKSHOP_KINDS = sourcePhase3WorkshopKinds;
 export const PHASE4_CASE_STEPS = sourcePhase4CaseSteps;
@@ -105,7 +114,7 @@ export const PHASE5_LIVE_MOMENT_KINDS = sourcePhase5LiveMomentKinds;
 export const getPhase6RetrievalQuestions = sourceGetPhase6RetrievalQuestions;
 export const PHASE6_REVIEW_STAGES = sourcePhase6ReviewStages;
 export const PHASE7_SESSION_ROUTES = sourcePhase7SessionRoutes;
-export type { Role, CourseCategory, Phase7RouteMinutes, Phase7SlideGuide, Phase7FacilitatorPlan, Phase8Check, Phase8CourseAudit, Phase2ReadingDepth, Phase2ReadingPack, Phase2GlossaryItem, Phase2ReadingSection, Phase3WorkshopKind, Phase3WorkshopPack, Phase3WorkshopOption, Phase3BranchStage, Phase4ProgressiveCasePack, Phase4ProgressiveCaseModulePack, Phase4CaseStep, Phase4CaseNumber, Phase4RoleLens, Phase4Choice, Phase5LiveMoment, Phase5LiveMomentKind };
+export type { Role, CourseCategory, Phase7RouteMinutes, Phase7SlideGuide, Phase7FacilitatorPlan, Phase8Check, Phase8CourseAudit, Phase2ReadingDepth, Phase2ReadingPack, Phase2GlossaryItem, Phase2ReadingSection, Phase3WorkshopKind, Phase3WorkshopPack, Phase3WorkshopOption, Phase3BranchStage, Phase4ProgressiveCasePack, Phase4ProgressiveCaseModulePack, Phase4CaseStep, Phase4CaseNumber, Phase4RoleLens, Phase4Choice, Phase5LiveMoment, Phase5LiveMomentKind, Phase6EngagementAudit, Phase6EngagementCheck };
 export type Module = CourseModule;
 
 export type CourseModule = SourceModule & {
@@ -254,3 +263,7 @@ export function getNextLivePresenterPhase5Moment(course: Course, module: CourseM
 }
 
 export const phase5LiveMomentActivityType = sourcePhase5LiveMomentActivityType;
+
+export function auditPresentationEngagementPhase6(course: Course) {
+  return sourceAuditPresentationEngagementPhase6(course as unknown as SourceCourse);
+}
