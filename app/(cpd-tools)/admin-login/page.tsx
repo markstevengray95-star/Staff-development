@@ -6,6 +6,24 @@ import { getSupabaseBrowserClient } from "@/lib/supabase";
 const ADMIN_EMAIL = "msgray95@hotmail.com";
 const APP_ORIGIN = "https://schoolcpd.vercel.app";
 
+async function isPlatformAdmin(client: ReturnType<typeof getSupabaseBrowserClient>, user: { id: string; email?: string | null; app_metadata?: Record<string, unknown> } | null) {
+  if (!user || user.email?.toLowerCase() !== ADMIN_EMAIL) return false;
+
+  const metadataAdmin = user.app_metadata?.platform_admin === true
+    || user.app_metadata?.zones_role === "admin"
+    || user.app_metadata?.staff_development_role === "admin";
+
+  if (metadataAdmin) return true;
+
+  const { data: profile } = await client
+    .from("staff_development_profiles")
+    .select("platform_role")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  return profile?.platform_role === "admin";
+}
+
 export default function AdminLoginPage() {
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -13,10 +31,8 @@ export default function AdminLoginPage() {
 
   useEffect(() => {
     const client = getSupabaseBrowserClient();
-    client.auth.getUser().then(({ data }) => {
-      const user = data.user;
-      const isAdmin = user?.email?.toLowerCase() === ADMIN_EMAIL && (user.app_metadata?.platform_admin === true || user.app_metadata?.zones_role === "admin");
-      if (isAdmin) window.location.replace("/admin");
+    client.auth.getUser().then(async ({ data }) => {
+      if (await isPlatformAdmin(client, data.user)) window.location.replace("/admin");
     });
   }, []);
 
@@ -31,14 +47,14 @@ export default function AdminLoginPage() {
       setBusy(false);
       return;
     }
-    const user = data.user;
-    const isAdmin = user?.email?.toLowerCase() === ADMIN_EMAIL && (user.app_metadata?.platform_admin === true || user.app_metadata?.zones_role === "admin");
-    if (!isAdmin) {
+
+    if (!(await isPlatformAdmin(client, data.user))) {
       await client.auth.signOut();
       setMessage("This account is not authorised for platform administration.");
       setBusy(false);
       return;
     }
+
     window.location.replace("/admin");
   }
 
@@ -56,7 +72,7 @@ export default function AdminLoginPage() {
     <section style={{ width: "min(100%,460px)", background: "white", border: "1px solid #d9e4e6", borderRadius: 24, padding: 32, boxShadow: "0 22px 60px rgba(24,57,69,.14)" }}>
       <span style={{ fontSize: 11, fontWeight: 900, letterSpacing: ".13em", color: "#397aa3" }}>PLATFORM ADMIN</span>
       <h1 style={{ margin: "9px 0 8px", fontSize: 32, letterSpacing: "-.03em" }}>Staff Development admin</h1>
-      <p style={{ color: "#60747b", lineHeight: 1.55, marginBottom: 22 }}>Sign in with the administrator account to access all CPD, Zones, school and management tools.</p>
+      <p style={{ color: "#60747b", lineHeight: 1.55, marginBottom: 22 }}>Sign in with the administrator account to access all CPD, every course section, Zones, school and management tools.</p>
       <form onSubmit={signIn} style={{ display: "grid", gap: 14 }}>
         <label style={{ display: "grid", gap: 6, fontSize: 13, fontWeight: 750 }}>Admin email
           <input value={ADMIN_EMAIL} readOnly autoComplete="username" style={{ width: "100%", boxSizing: "border-box", padding: "12px 13px", borderRadius: 10, border: "1px solid #cbd7dc", background: "#f5f8f9", color: "#314d58" }} />
