@@ -69,16 +69,16 @@ const areaConfig: Record<WholeSchoolArea, AreaConfig> = {
   develop: {
     eyebrow: "DEVELOP",
     title: "Professional Development",
-    description: "Turn professional learning into an ongoing cycle of goals, courses, implementation, evidence and impact review.",
+    description: "Turn professional learning into an ongoing cycle of goals, courses, coaching, evidence, appraisal and impact review.",
     accent: "Professional growth",
     tools: [
       { title: "Professional Learning Hub", description: "Bring assigned CPD, course progress, development goals, external CPD and impact reviews into one workflow.", href: "/professional-learning", icon: "◎", badge: "Phase 39" },
+      { title: "Professional Portfolio", description: "Keep CPD, coaching, evidence, achievements, reflections and impact in one professional record.", href: "/portfolio", icon: "▤", badge: "Phase 40" },
+      { title: "Coaching", description: "Run structured coaching cycles linked to development targets, CPD, evidence and next actions.", href: "/coaching", icon: "◎", badge: "Phase 41" },
+      { title: "Appraisal", description: "Manage the annual professional-review cycle, objectives, progress, evidence, support and agreed next steps.", href: "/appraisal", icon: "✓", badge: "Phase 42" },
       { title: "CPD Academy", description: "Browse and complete the full existing course library.", href: "/cpd", icon: "▣", badge: "Core" },
       { title: "Micro CPD", description: "Open shorter refresher learning and focused professional development.", href: "/micro-cpd", icon: "◫", badge: "Existing" },
       { title: "Personal Pathway", description: "Follow personalised development routes and recommended learning.", href: "/pathways/personal", icon: "↗", badge: "Existing" },
-      { title: "Professional Portfolio", description: "Keep development evidence, achievements and professional records together.", href: "/portfolio", icon: "▤", badge: "Existing" },
-      { title: "Coaching", description: "Open coaching and professional-conversation tools.", href: "/coaching", icon: "◎", badge: "Existing" },
-      { title: "Appraisal", description: "Open the existing appraisal workflow and objectives area.", href: "/appraisal", icon: "✓", badge: "Existing" },
       { title: "Compliance", description: "Open mandatory and compliance training records.", href: "/compliance", icon: "◉", roles: leadershipRoles, badge: "Existing" },
       { title: "AI CPD Tutor", description: "Ask, plan and reflect with the existing professional-learning assistant.", href: "/ai-coach", icon: "✧", badge: "Existing" },
     ],
@@ -86,9 +86,11 @@ const areaConfig: Record<WholeSchoolArea, AreaConfig> = {
   school: {
     eyebrow: "SCHOOL",
     title: "Whole-school Operations",
-    description: "A single home for leadership, departments, improvement, induction and organisation-level tools.",
+    description: "A single home for communication, leadership, departments, improvement, induction and organisation-level tools.",
     accent: "School systems",
     tools: [
+      { title: "Notices Centre", description: "Publish and manage targeted school notices, priorities, expiry dates and staff acknowledgements.", href: "/notices", icon: "✉", roles: leadershipRoles, badge: "Phase 43" },
+      { title: "Appraisal", description: "Open shared professional-review information and schedule staff review meetings where your role allows it.", href: "/appraisal", icon: "✓", roles: leadershipRoles, badge: "Phase 42" },
       { title: "School Hub", description: "Open the existing whole-school development and organisation area.", href: "/school-hub", icon: "⌂", roles: leadershipRoles, badge: "Existing" },
       { title: "Department Hubs", description: "Open operational department spaces and switch between departments where your role allows it.", href: "/department-hub", icon: "▦", roles: leadershipRoles, badge: "Phase 33" },
       { title: "Curriculum Hub", description: "Review curriculum structure across subjects and year groups.", href: "/curriculum", icon: "▤", roles: leadershipRoles, badge: "Phase 34" },
@@ -106,9 +108,10 @@ const areaConfig: Record<WholeSchoolArea, AreaConfig> = {
   resources: {
     eyebrow: "RESOURCES",
     title: "Resources & Knowledge",
-    description: "A clear home for searchable guidance, documents, course packs and policy-related material.",
+    description: "A clear home for school notices, searchable guidance, documents, course packs and policy-related material.",
     accent: "Find what you need",
     tools: [
+      { title: "School Notices", description: "Read current school notices, mark items as read and complete required acknowledgements.", href: "/notices", icon: "✉", badge: "Phase 43" },
       { title: "My Teaching Resources", description: "Open your private library of generated and edited classroom resources.", href: "/resource-generator", icon: "✎", roles: teachingRoles, badge: "New" },
       { title: "Curriculum Resources", description: "Open curriculum units, lesson sequences, objectives, vocabulary and assessment guidance.", href: "/curriculum", icon: "▤", roles: teachingRoles, badge: "New" },
       { title: "Pastoral Resources", description: "Open tutor-time, mentoring, wellbeing, attendance, behaviour and reward resources.", href: "/pastoral", icon: "◎", badge: "New" },
@@ -209,9 +212,9 @@ export default function WholeSchoolHub({ area }: { area: WholeSchoolArea }) {
           </div>
         </div>
         <div className="wholeSchoolHeroCard">
-          <span>PHASES 38–39</span>
-          <strong>Track support. Track impact.</strong>
-          <p>Student interventions now have a structured review cycle, while professional learning connects CPD completion to goals, implementation and evidence of impact.</p>
+          <span>PHASES 42–43</span>
+          <strong>Review development. Share what matters.</strong>
+          <p>Appraisal now connects objectives, evidence and professional learning, while the Notices Centre gives staff a focused school communication workflow.</p>
         </div>
       </section>
 
