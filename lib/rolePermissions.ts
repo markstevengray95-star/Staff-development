@@ -87,6 +87,7 @@ const ROUTE_PERMISSIONS: Array<[string, StaffPermission]> = [
   ["/coaching", "develop:view"],
   ["/appraisal", "develop:view"],
   ["/notices", "develop:view"],
+  ["/calendar", "develop:view"],
   ["/develop", "develop:view"],
 ];
 
