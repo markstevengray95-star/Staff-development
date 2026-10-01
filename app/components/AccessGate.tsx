@@ -4,6 +4,7 @@ import { useEffect, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import CloudSyncGate from "./CloudSyncGate";
 import RoleAccessGate from "./RoleAccessGate";
+import MobilePlatformDock from "./MobilePlatformDock";
 
 export default function AccessGate({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -18,7 +19,10 @@ export default function AccessGate({ children }: { children: ReactNode }) {
   if (adminLogin) return <>{children}</>;
   return (
     <CloudSyncGate>
-      <RoleAccessGate>{children}</RoleAccessGate>
+      <RoleAccessGate>
+        {children}
+        <MobilePlatformDock />
+      </RoleAccessGate>
     </CloudSyncGate>
   );
 }
