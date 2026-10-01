@@ -52,9 +52,10 @@ const areaConfig: Record<WholeSchoolArea, AreaConfig> = {
   students: {
     eyebrow: "STUDENTS",
     title: "Pastoral, Regulation & Inclusion",
-    description: "Bring the regulation and student-support tools into a clear student area instead of mixing them into the CPD navigation.",
+    description: "Tutor-time planning, pastoral support, regulation tools and safeguarding guidance now sit together in a clear student-support area.",
     accent: "Student support",
     tools: [
+      { title: "Pastoral Hub", description: "Plan tutor time and access assemblies, mentoring, attendance, behaviour, rewards, wellbeing and key pastoral dates.", href: "/pastoral", icon: "◎", badge: "Phase 35" },
       { title: "Regulation Room", description: "Use the full regulation-room experience and practical regulation activities.", href: "/regulation-room", icon: "◇", badge: "Existing" },
       { title: "Zones Practice", description: "Open the interactive Zones practice area for staff and student support.", href: "/zones", icon: "◆", badge: "Existing" },
       { title: "Zone Quest", description: "Use the existing interactive regulation game and scenario experience.", href: "/zone-quest", icon: "◈", badge: "Existing" },
@@ -87,6 +88,7 @@ const areaConfig: Record<WholeSchoolArea, AreaConfig> = {
       { title: "School Hub", description: "Open the existing whole-school development and organisation area.", href: "/school-hub", icon: "⌂", roles: leadershipRoles, badge: "Existing" },
       { title: "Department Hubs", description: "Open operational department spaces and switch between departments where your role allows it.", href: "/department-hub", icon: "▦", roles: leadershipRoles, badge: "Phase 33" },
       { title: "Curriculum Hub", description: "Review curriculum structure across subjects and year groups.", href: "/curriculum", icon: "▤", roles: leadershipRoles, badge: "Phase 34" },
+      { title: "Pastoral Hub", description: "Review tutor-time resources, pastoral priorities and school-wide student-support content.", href: "/pastoral", icon: "◎", roles: leadershipRoles, badge: "Phase 35" },
       { title: "School Improvement", description: "Open improvement planning and implementation tools.", href: "/improvement", icon: "↗", roles: leadershipRoles, badge: "Existing" },
       { title: "Staff Induction", description: "Support new staff through the existing induction workflow.", href: "/induction", icon: "✦", roles: leadershipRoles, badge: "Existing" },
       { title: "Compliance Centre", description: "Review mandatory training and compliance activity.", href: "/compliance", icon: "✓", roles: leadershipRoles, badge: "Existing" },
@@ -102,6 +104,7 @@ const areaConfig: Record<WholeSchoolArea, AreaConfig> = {
     tools: [
       { title: "My Teaching Resources", description: "Open your private library of generated and edited classroom resources.", href: "/resource-generator", icon: "✎", roles: teachingRoles, badge: "New" },
       { title: "Curriculum Resources", description: "Open curriculum units, lesson sequences, objectives, vocabulary and assessment guidance.", href: "/curriculum", icon: "▤", roles: teachingRoles, badge: "New" },
+      { title: "Pastoral Resources", description: "Open tutor-time, mentoring, wellbeing, attendance, behaviour and reward resources.", href: "/pastoral", icon: "◎", badge: "New" },
       { title: "Knowledge Base", description: "Search the existing school knowledge and guidance area.", href: "/knowledge-base", icon: "⌕", badge: "Existing" },
       { title: "Safeguarding Documents", description: "Open safeguarding documents and supporting materials.", href: "/safeguarding/documents", icon: "▤", badge: "Existing" },
       { title: "Course Packs", description: "Open reusable CPD and facilitator packs.", href: "/course-packs", icon: "▣", roles: teachingRoles, badge: "Existing" },
@@ -197,9 +200,9 @@ export default function WholeSchoolHub({ area }: { area: WholeSchoolArea }) {
           </div>
         </div>
         <div className="wholeSchoolHeroCard">
-          <span>PHASES 33–34</span>
-          <strong>Departments & curriculum</strong>
-          <p>The platform now connects day-to-day department work with a structured whole-school curriculum view.</p>
+          <span>PHASE 35</span>
+          <strong>Pastoral support added</strong>
+          <p>The whole-school platform now includes a weekly tutor and pastoral workspace alongside regulation, curriculum and staff development.</p>
         </div>
       </section>
 
