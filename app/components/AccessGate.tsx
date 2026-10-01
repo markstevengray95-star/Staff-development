@@ -4,6 +4,7 @@ import { useEffect, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import CloudSyncGate from "./CloudSyncGate";
 import RoleAccessGate from "./RoleAccessGate";
+import GlobalMainTabs from "./GlobalMainTabs";
 import MobilePlatformDock from "./MobilePlatformDock";
 
 export default function AccessGate({ children }: { children: ReactNode }) {
@@ -20,6 +21,7 @@ export default function AccessGate({ children }: { children: ReactNode }) {
   return (
     <CloudSyncGate>
       <RoleAccessGate>
+        <GlobalMainTabs />
         {children}
         <MobilePlatformDock />
       </RoleAccessGate>
