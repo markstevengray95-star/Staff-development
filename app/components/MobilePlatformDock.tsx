@@ -7,19 +7,37 @@ import "./MobilePlatformDock.css";
 const hiddenPrefixes = ["/auth", "/reset-password", "/admin-login", "/owner-login", "/verify", "/join", "/access-denied"];
 const items = [
   { href: "/dashboard", label: "Home", icon: "⌂" },
+  { href: "/teach", label: "Teach", icon: "✦" },
+  { href: "/students", label: "Students", icon: "◉" },
+  { href: "/develop", label: "Develop", icon: "↗" },
   { href: "/school", label: "School", icon: "▦" },
-  { href: "/search", label: "Search", icon: "⌕" },
-  { href: "/notifications", label: "Alerts", icon: "◉" },
-  { href: "/resources", label: "More", icon: "▤" },
+  { href: "/resources", label: "Resources", icon: "▤" },
 ];
+
+const routeGroups: Record<string, string[]> = {
+  "/teach": ["/teaching-learning", "/resource-generator", "/department-hub", "/curriculum", "/subject-cpd", "/standards", "/learning-walks", "/department-cpd"],
+  "/students": ["/pastoral", "/regulation-behaviour", "/send-eal", "/interventions", "/regulation-room", "/zones", "/zone-quest", "/zones-school", "/zones-cpd"],
+  "/develop": ["/professional-learning", "/portfolio", "/coaching", "/appraisal", "/cpd", "/micro-cpd", "/pathways", "/training", "/development", "/actions", "/impact", "/recommendations", "/needs-audit", "/external-cpd", "/certificates", "/reading", "/adaptive", "/ai-coach", "/coach"],
+  "/school": ["/calendar", "/notices", "/directory", "/school-improvement", "/department-plans", "/forms", "/trips", "/compliance", "/induction", "/leadership-dashboard", "/department-analytics", "/recognition", "/staff-voice", "/notifications", "/integrations", "/admin-centre", "/organisation", "/school-hub", "/departments", "/improvement", "/leadership", "/school-access", "/staff-access", "/staff-sync", "/launch-readiness", "/platform", "/owner-portal", "/admin"],
+  "/resources": ["/resource-library", "/policies", "/search", "/school-assistant", "/files", "/knowledge-base", "/safeguarding", "/policy-training", "/course-packs", "/help", "/accessibility"],
+};
+
+function matches(pathname: string, prefix: string) {
+  return pathname === prefix || pathname.startsWith(`${prefix}/`);
+}
+
+function activeFor(pathname: string, href: string) {
+  if (href === "/dashboard") return pathname === "/" || matches(pathname, href);
+  return matches(pathname, href) || (routeGroups[href] || []).some((prefix) => matches(pathname, prefix));
+}
 
 export default function MobilePlatformDock() {
   const pathname = usePathname();
-  if (hiddenPrefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))) return null;
-  return <nav className="mobilePlatformDock" aria-label="Mobile whole-school navigation">
+  if (hiddenPrefixes.some((prefix) => matches(pathname, prefix))) return null;
+  return <nav className="mobilePlatformDock" aria-label="Main areas">
     {items.map((item) => {
-      const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
-      return <Link key={item.href} href={item.href} className={active ? "active" : ""}><span>{item.icon}</span><small>{item.label}</small></Link>;
+      const active = activeFor(pathname, item.href);
+      return <Link key={item.href} href={item.href} className={active ? "active" : ""} aria-current={active ? "page" : undefined}><span>{item.icon}</span><small>{item.label}</small></Link>;
     })}
   </nav>;
 }
