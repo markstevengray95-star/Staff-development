@@ -35,13 +35,15 @@ const areaConfig: Record<WholeSchoolArea, AreaConfig> = {
   teach: {
     eyebrow: "TEACH",
     title: "Teaching & Learning",
-    description: "Plan, improve and share classroom practice from one place. Practical teaching guidance and classroom resource creation now sit alongside the existing professional-learning tools.",
+    description: "Plan, improve and share classroom practice from one place. Teaching guidance, department work, curriculum planning and resource creation now sit together.",
     accent: "Teaching",
     tools: [
       { title: "Teaching & Learning Hub", description: "Search practical strategies for retrieval, questioning, adaptive teaching, feedback, literacy and more.", href: "/teaching-learning", icon: "◎", roles: teachingRoles, badge: "Phase 31" },
       { title: "Teaching Resource Generator", description: "Create, edit, save and download retrieval tasks, quizzes, worksheets, exit tickets and more.", href: "/resource-generator", icon: "✎", roles: teachingRoles, badge: "Phase 32" },
+      { title: "Department Hub", description: "Open notices, resources, assessments, meeting notes, key dates, staff and development work for your department.", href: "/department-hub", icon: "▦", roles: teachingRoles, badge: "Phase 33" },
+      { title: "Curriculum Hub", description: "Browse and build curriculum by subject, year group, topic and lesson, with objectives, vocabulary and assessment guidance.", href: "/curriculum", icon: "▤", roles: teachingRoles, badge: "Phase 34" },
       { title: "Teaching & Learning CPD", description: "Open subject-specific and classroom-practice professional learning.", href: "/subject-cpd", icon: "✦", roles: teachingRoles, badge: "Existing" },
-      { title: "Department Hubs", description: "Open department areas, resources, actions and shared development work.", href: "/departments", icon: "▦", roles: teachingRoles, badge: "Existing" },
+      { title: "Department Development", description: "Open the existing CPD plans, actions, learning-walk themes and implementation evidence dashboard.", href: "/departments", icon: "↗", roles: leadershipRoles, badge: "Existing" },
       { title: "Professional Standards", description: "Connect development activity to professional standards and expectations.", href: "/standards", icon: "✓", roles: teachingRoles, badge: "Existing" },
       { title: "Learning Walks", description: "Open the learning-walk and classroom-practice tools already in the platform.", href: "/learning-walks", icon: "◎", roles: leadershipRoles, badge: "Existing" },
       { title: "AI CPD Tutor", description: "Ask for planning, reflection and professional-learning support.", href: "/ai-coach", icon: "✧", roles: teachingRoles, badge: "Existing" },
@@ -83,7 +85,8 @@ const areaConfig: Record<WholeSchoolArea, AreaConfig> = {
     accent: "School systems",
     tools: [
       { title: "School Hub", description: "Open the existing whole-school development and organisation area.", href: "/school-hub", icon: "⌂", roles: leadershipRoles, badge: "Existing" },
-      { title: "Departments", description: "Manage and review department-level development activity.", href: "/departments", icon: "▦", roles: leadershipRoles, badge: "Existing" },
+      { title: "Department Hubs", description: "Open operational department spaces and switch between departments where your role allows it.", href: "/department-hub", icon: "▦", roles: leadershipRoles, badge: "Phase 33" },
+      { title: "Curriculum Hub", description: "Review curriculum structure across subjects and year groups.", href: "/curriculum", icon: "▤", roles: leadershipRoles, badge: "Phase 34" },
       { title: "School Improvement", description: "Open improvement planning and implementation tools.", href: "/improvement", icon: "↗", roles: leadershipRoles, badge: "Existing" },
       { title: "Staff Induction", description: "Support new staff through the existing induction workflow.", href: "/induction", icon: "✦", roles: leadershipRoles, badge: "Existing" },
       { title: "Compliance Centre", description: "Review mandatory training and compliance activity.", href: "/compliance", icon: "✓", roles: leadershipRoles, badge: "Existing" },
@@ -98,6 +101,7 @@ const areaConfig: Record<WholeSchoolArea, AreaConfig> = {
     accent: "Find what you need",
     tools: [
       { title: "My Teaching Resources", description: "Open your private library of generated and edited classroom resources.", href: "/resource-generator", icon: "✎", roles: teachingRoles, badge: "New" },
+      { title: "Curriculum Resources", description: "Open curriculum units, lesson sequences, objectives, vocabulary and assessment guidance.", href: "/curriculum", icon: "▤", roles: teachingRoles, badge: "New" },
       { title: "Knowledge Base", description: "Search the existing school knowledge and guidance area.", href: "/knowledge-base", icon: "⌕", badge: "Existing" },
       { title: "Safeguarding Documents", description: "Open safeguarding documents and supporting materials.", href: "/safeguarding/documents", icon: "▤", badge: "Existing" },
       { title: "Course Packs", description: "Open reusable CPD and facilitator packs.", href: "/course-packs", icon: "▣", roles: teachingRoles, badge: "Existing" },
@@ -193,9 +197,9 @@ export default function WholeSchoolHub({ area }: { area: WholeSchoolArea }) {
           </div>
         </div>
         <div className="wholeSchoolHeroCard">
-          <span>PHASES 31–32</span>
-          <strong>Teaching toolkit expanded</strong>
-          <p>The Teach area now combines evidence-informed classroom practice with a personal resource generator and library.</p>
+          <span>PHASES 33–34</span>
+          <strong>Departments & curriculum</strong>
+          <p>The platform now connects day-to-day department work with a structured whole-school curriculum view.</p>
         </div>
       </section>
 
