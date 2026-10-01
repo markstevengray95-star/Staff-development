@@ -52,12 +52,13 @@ const areaConfig: Record<WholeSchoolArea, AreaConfig> = {
   students: {
     eyebrow: "STUDENTS",
     title: "Pastoral, Regulation & Inclusion",
-    description: "Tutor-time planning, pastoral support, regulation, behaviour, SEND and EAL guidance now sit together in a clear student-support area.",
+    description: "Tutor-time planning, pastoral support, regulation, behaviour, SEND, EAL and intervention tracking now sit together in a clear student-support area.",
     accent: "Student support",
     tools: [
       { title: "Pastoral Hub", description: "Plan tutor time and access assemblies, mentoring, attendance, behaviour, rewards, wellbeing and key pastoral dates.", href: "/pastoral", icon: "◎", badge: "Phase 35" },
       { title: "Regulation & Behaviour", description: "Use one consistent workflow for regulation support, classroom behaviour, restorative response and return to learning.", href: "/regulation-behaviour", icon: "◉", badge: "Phase 36" },
       { title: "SEND & EAL Hub", description: "Find inclusive classroom adaptations, SEND strategies, EAL scaffolds and school-specific inclusion guidance.", href: "/send-eal", icon: "◇", badge: "Phase 37" },
+      { title: "Intervention Tracking", description: "Set baselines and goals, record support, schedule reviews and track evidence, adaptations and outcomes.", href: "/interventions", icon: "↻", badge: "Phase 38" },
       { title: "Regulation Room", description: "Use the full regulation-room experience and practical regulation activities.", href: "/regulation-room", icon: "◇", badge: "Existing" },
       { title: "Zones Practice", description: "Open the interactive Zones practice area for staff and student support.", href: "/zones", icon: "◆", badge: "Existing" },
       { title: "Zone Quest", description: "Use the existing interactive regulation game and scenario experience.", href: "/zone-quest", icon: "◈", badge: "Existing" },
@@ -68,9 +69,10 @@ const areaConfig: Record<WholeSchoolArea, AreaConfig> = {
   develop: {
     eyebrow: "DEVELOP",
     title: "Professional Development",
-    description: "All existing CPD remains here. Development now sits as one part of the wider staff platform rather than being the whole website.",
+    description: "Turn professional learning into an ongoing cycle of goals, courses, implementation, evidence and impact review.",
     accent: "Professional growth",
     tools: [
+      { title: "Professional Learning Hub", description: "Bring assigned CPD, course progress, development goals, external CPD and impact reviews into one workflow.", href: "/professional-learning", icon: "◎", badge: "Phase 39" },
       { title: "CPD Academy", description: "Browse and complete the full existing course library.", href: "/cpd", icon: "▣", badge: "Core" },
       { title: "Micro CPD", description: "Open shorter refresher learning and focused professional development.", href: "/micro-cpd", icon: "◫", badge: "Existing" },
       { title: "Personal Pathway", description: "Follow personalised development routes and recommended learning.", href: "/pathways/personal", icon: "↗", badge: "Existing" },
@@ -93,6 +95,7 @@ const areaConfig: Record<WholeSchoolArea, AreaConfig> = {
       { title: "Pastoral Hub", description: "Review tutor-time resources, pastoral priorities and school-wide student-support content.", href: "/pastoral", icon: "◎", roles: leadershipRoles, badge: "Phase 35" },
       { title: "Regulation & Behaviour", description: "Manage the shared school playbook for behaviour routines, regulation and restorative response.", href: "/regulation-behaviour", icon: "◉", roles: leadershipRoles, badge: "Phase 36" },
       { title: "SEND & EAL Hub", description: "Manage school-wide inclusion strategies, language scaffolds and practical staff guidance.", href: "/send-eal", icon: "◇", roles: leadershipRoles, badge: "Phase 37" },
+      { title: "Intervention Tracking", description: "Review targeted student-support plans, upcoming reviews, evidence and outcomes.", href: "/interventions", icon: "↻", roles: leadershipRoles, badge: "Phase 38" },
       { title: "School Improvement", description: "Open improvement planning and implementation tools.", href: "/improvement", icon: "↗", roles: leadershipRoles, badge: "Existing" },
       { title: "Staff Induction", description: "Support new staff through the existing induction workflow.", href: "/induction", icon: "✦", roles: leadershipRoles, badge: "Existing" },
       { title: "Compliance Centre", description: "Review mandatory training and compliance activity.", href: "/compliance", icon: "✓", roles: leadershipRoles, badge: "Existing" },
@@ -206,9 +209,9 @@ export default function WholeSchoolHub({ area }: { area: WholeSchoolArea }) {
           </div>
         </div>
         <div className="wholeSchoolHeroCard">
-          <span>PHASES 35–37</span>
-          <strong>Pastoral, regulation & inclusion</strong>
-          <p>Pastoral planning, regulation and behaviour guidance now connect directly to a practical SEND and EAL inclusion workspace.</p>
+          <span>PHASES 38–39</span>
+          <strong>Track support. Track impact.</strong>
+          <p>Student interventions now have a structured review cycle, while professional learning connects CPD completion to goals, implementation and evidence of impact.</p>
         </div>
       </section>
 
