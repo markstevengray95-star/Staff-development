@@ -1,0 +1,230 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+
+export type WholeSchoolArea = "teach" | "students" | "develop" | "school" | "resources";
+
+type RoleId =
+  | "teacher"
+  | "tutor"
+  | "hod"
+  | "pastoral"
+  | "send-eal"
+  | "slt"
+  | "administrator"
+  | "support"
+  | "super-admin";
+
+type ToolCard = {
+  title: string;
+  description: string;
+  href: string;
+  icon: string;
+  roles?: RoleId[];
+  badge?: string;
+};
+
+type AreaConfig = {
+  eyebrow: string;
+  title: string;
+  description: string;
+  accent: string;
+  tools: ToolCard[];
+};
+
+const roles: { id: RoleId; label: string }[] = [
+  { id: "teacher", label: "Teacher" },
+  { id: "tutor", label: "Tutor" },
+  { id: "hod", label: "Head of Department" },
+  { id: "pastoral", label: "Pastoral Lead" },
+  { id: "send-eal", label: "SEND / EAL" },
+  { id: "slt", label: "SLT" },
+  { id: "administrator", label: "Administrator" },
+  { id: "support", label: "Support Staff" },
+  { id: "super-admin", label: "Super Admin" },
+];
+
+const leadershipRoles: RoleId[] = ["hod", "pastoral", "send-eal", "slt", "administrator", "super-admin"];
+const seniorRoles: RoleId[] = ["slt", "administrator", "super-admin"];
+const teachingRoles: RoleId[] = ["teacher", "tutor", "hod", "pastoral", "send-eal", "slt", "super-admin"];
+
+const areaConfig: Record<WholeSchoolArea, AreaConfig> = {
+  teach: {
+    eyebrow: "TEACH",
+    title: "Teaching & Learning",
+    description: "Plan, improve and share classroom practice from one place. Existing CPD tools remain available, but teaching tools now have their own whole-school home.",
+    accent: "Teaching",
+    tools: [
+      { title: "Teaching & Learning CPD", description: "Open subject-specific and classroom-practice professional learning.", href: "/subject-cpd", icon: "✦", roles: teachingRoles, badge: "Existing" },
+      { title: "Department Hubs", description: "Open department areas, resources, actions and shared development work.", href: "/departments", icon: "▦", roles: teachingRoles, badge: "Existing" },
+      { title: "Professional Standards", description: "Connect development activity to professional standards and expectations.", href: "/standards", icon: "✓", roles: teachingRoles, badge: "Existing" },
+      { title: "Learning Walks", description: "Open the learning-walk and classroom-practice tools already in the platform.", href: "/learning-walks", icon: "◎", roles: leadershipRoles, badge: "Existing" },
+      { title: "AI CPD Tutor", description: "Ask for planning, reflection and professional-learning support.", href: "/ai-coach", icon: "✧", roles: teachingRoles, badge: "Existing" },
+    ],
+  },
+  students: {
+    eyebrow: "STUDENTS",
+    title: "Pastoral, Regulation & Inclusion",
+    description: "Bring the regulation and student-support tools into a clear student area instead of mixing them into the CPD navigation.",
+    accent: "Student support",
+    tools: [
+      { title: "Regulation Room", description: "Use the full regulation-room experience and practical regulation activities.", href: "/regulation-room", icon: "◇", badge: "Existing" },
+      { title: "Zones Practice", description: "Open the interactive Zones practice area for staff and student support.", href: "/zones", icon: "◆", badge: "Existing" },
+      { title: "Zone Quest", description: "Use the existing interactive regulation game and scenario experience.", href: "/zone-quest", icon: "◈", badge: "Existing" },
+      { title: "Whole-school Regulation", description: "Open school-level regulation implementation and support tools.", href: "/zones-school", icon: "◉", roles: leadershipRoles, badge: "Existing" },
+      { title: "Zones CPD", description: "Open the specialist regulation CPD area from within Student support.", href: "/zones-cpd", icon: "▣", roles: teachingRoles, badge: "Existing" },
+    ],
+  },
+  develop: {
+    eyebrow: "DEVELOP",
+    title: "Professional Development",
+    description: "All existing CPD remains here. Development now sits as one part of the wider staff platform rather than being the whole website.",
+    accent: "Professional growth",
+    tools: [
+      { title: "CPD Academy", description: "Browse and complete the full existing course library.", href: "/cpd", icon: "▣", badge: "Core" },
+      { title: "Micro CPD", description: "Open shorter refresher learning and focused professional development.", href: "/micro-cpd", icon: "◫", badge: "Existing" },
+      { title: "Personal Pathway", description: "Follow personalised development routes and recommended learning.", href: "/pathways/personal", icon: "↗", badge: "Existing" },
+      { title: "Professional Portfolio", description: "Keep development evidence, achievements and professional records together.", href: "/portfolio", icon: "▤", badge: "Existing" },
+      { title: "Coaching", description: "Open coaching and professional-conversation tools.", href: "/coaching", icon: "◎", badge: "Existing" },
+      { title: "Appraisal", description: "Open the existing appraisal workflow and objectives area.", href: "/appraisal", icon: "✓", badge: "Existing" },
+      { title: "Compliance", description: "Open mandatory and compliance training records.", href: "/compliance", icon: "◉", roles: leadershipRoles, badge: "Existing" },
+      { title: "AI CPD Tutor", description: "Ask, plan and reflect with the existing professional-learning assistant.", href: "/ai-coach", icon: "✧", badge: "Existing" },
+    ],
+  },
+  school: {
+    eyebrow: "SCHOOL",
+    title: "Whole-school Operations",
+    description: "A single home for leadership, departments, improvement, induction and organisation-level tools.",
+    accent: "School systems",
+    tools: [
+      { title: "School Hub", description: "Open the existing whole-school development and organisation area.", href: "/school-hub", icon: "⌂", roles: leadershipRoles, badge: "Existing" },
+      { title: "Departments", description: "Manage and review department-level development activity.", href: "/departments", icon: "▦", roles: leadershipRoles, badge: "Existing" },
+      { title: "School Improvement", description: "Open improvement planning and implementation tools.", href: "/improvement", icon: "↗", roles: leadershipRoles, badge: "Existing" },
+      { title: "Staff Induction", description: "Support new staff through the existing induction workflow.", href: "/induction", icon: "✦", roles: leadershipRoles, badge: "Existing" },
+      { title: "Compliance Centre", description: "Review mandatory training and compliance activity.", href: "/compliance", icon: "✓", roles: leadershipRoles, badge: "Existing" },
+      { title: "Organisation", description: "Open organisation-level configuration and school-wide management tools.", href: "/organisation", icon: "◫", roles: seniorRoles, badge: "Existing" },
+      { title: "Administration", description: "Open platform administration for authorised staff.", href: "/admin", icon: "⚙", roles: seniorRoles, badge: "Restricted" },
+    ],
+  },
+  resources: {
+    eyebrow: "RESOURCES",
+    title: "Resources & Knowledge",
+    description: "A clear home for searchable guidance, documents, course packs and policy-related material.",
+    accent: "Find what you need",
+    tools: [
+      { title: "Knowledge Base", description: "Search the existing school knowledge and guidance area.", href: "/knowledge-base", icon: "⌕", badge: "Existing" },
+      { title: "Safeguarding Documents", description: "Open safeguarding documents and supporting materials.", href: "/safeguarding/documents", icon: "▤", badge: "Existing" },
+      { title: "Course Packs", description: "Open reusable CPD and facilitator packs.", href: "/course-packs", icon: "▣", roles: teachingRoles, badge: "Existing" },
+      { title: "Policy Training", description: "Use policy-linked training and professional-learning content.", href: "/policy-training", icon: "✓", badge: "Existing" },
+      { title: "Safeguarding", description: "Open safeguarding learning and guidance.", href: "/safeguarding", icon: "◇", badge: "Existing" },
+    ],
+  },
+};
+
+const topNav: { id: "home" | WholeSchoolArea; label: string; href: string; icon: string }[] = [
+  { id: "home", label: "Home", href: "/", icon: "⌂" },
+  { id: "teach", label: "Teach", href: "/teach", icon: "✦" },
+  { id: "students", label: "Students", href: "/students", icon: "◉" },
+  { id: "develop", label: "Develop", href: "/develop", icon: "↗" },
+  { id: "school", label: "School", href: "/school", icon: "▦" },
+  { id: "resources", label: "Resources", href: "/resources", icon: "▤" },
+];
+
+function roleCanSee(role: RoleId, card: ToolCard) {
+  if (!card.roles || card.roles.length === 0) return true;
+  if (role === "super-admin") return true;
+  return card.roles.includes(role);
+}
+
+export default function WholeSchoolHub({ area }: { area: WholeSchoolArea }) {
+  const [role, setRole] = useState<RoleId>("teacher");
+  const config = areaConfig[area];
+
+  useEffect(() => {
+    const saved = window.localStorage.getItem("staff-development-role") as RoleId | null;
+    if (saved && roles.some((item) => item.id === saved)) setRole(saved);
+  }, []);
+
+  const visibleTools = useMemo(() => config.tools.filter((tool) => roleCanSee(role, tool)), [config.tools, role]);
+  const roleLabel = roles.find((item) => item.id === role)?.label || "Teacher";
+
+  function changeRole(nextRole: RoleId) {
+    setRole(nextRole);
+    window.localStorage.setItem("staff-development-role", nextRole);
+  }
+
+  return (
+    <main className="wholeSchoolHub">
+      <header className="wholeSchoolHeader">
+        <Link href="/" className="wholeSchoolBrand" aria-label="Staff Development home">
+          <span className="wholeSchoolBrandMark">SD</span>
+          <span><strong>Staff Development</strong><small>Whole-school staff platform</small></span>
+        </Link>
+
+        <nav className="wholeSchoolTopNav" aria-label="Whole-school areas">
+          {topNav.map((item) => (
+            <Link key={item.id} href={item.href} className={item.id === area ? "active" : ""}>
+              <span>{item.icon}</span>{item.label}
+            </Link>
+          ))}
+        </nav>
+
+        <label className="wholeSchoolRole">
+          <span>View as</span>
+          <select value={role} onChange={(event) => changeRole(event.target.value as RoleId)}>
+            {roles.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}
+          </select>
+        </label>
+      </header>
+
+      <section className="wholeSchoolHero">
+        <div>
+          <span className="wholeSchoolEyebrow">{config.eyebrow}</span>
+          <h1>{config.title}</h1>
+          <p>{config.description}</p>
+          <div className="wholeSchoolHeroMeta">
+            <span>{config.accent}</span>
+            <span>{visibleTools.length} tools for {roleLabel}</span>
+          </div>
+        </div>
+        <div className="wholeSchoolHeroCard">
+          <span>PHASE 28</span>
+          <strong>Whole-school structure</strong>
+          <p>CPD, student support and school tools are now grouped by purpose instead of appearing as one long feature list.</p>
+        </div>
+      </section>
+
+      <section className="wholeSchoolSectionHeading">
+        <div>
+          <span>YOUR AREA</span>
+          <h2>{roleLabel} tools</h2>
+        </div>
+        <p>Role filtering changes navigation only. Secure database permissions are handled separately in the permissions phase.</p>
+      </section>
+
+      <section className="wholeSchoolToolGrid">
+        {visibleTools.map((tool) => (
+          <Link key={`${tool.title}-${tool.href}`} href={tool.href} className="wholeSchoolToolCard">
+            <div className="wholeSchoolToolIcon">{tool.icon}</div>
+            <div className="wholeSchoolToolCopy">
+              <div className="wholeSchoolToolTitleRow">
+                <h3>{tool.title}</h3>
+                {tool.badge && <span>{tool.badge}</span>}
+              </div>
+              <p>{tool.description}</p>
+              <strong>Open tool →</strong>
+            </div>
+          </Link>
+        ))}
+      </section>
+
+      {visibleTools.length === 0 && (
+        <section className="wholeSchoolEmpty">
+          <strong>No tools are assigned to this role in this area yet.</strong>
+          <p>Choose another whole-school area above or switch the preview role.</p>
+        </section>
+      )}
+    </main>
+  );
+}
