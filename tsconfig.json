@@ -15,6 +15,7 @@
     "incremental": true,
     "plugins": [{ "name": "next" }],
     "paths": {
+      "teaching-cpd/app/components/CourseLab": ["./app/components/CourseLabCompat.tsx"],
       "@/lib/*": ["./lib/*", "./node_modules/teaching-cpd/lib/*"],
       "@/*": ["./*"]
     }
