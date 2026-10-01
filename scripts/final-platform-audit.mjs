@@ -40,7 +40,8 @@ if (duplicateRoutes.length) failures.push(`Duplicate Next.js route outputs: ${[.
 
 const requiredRoutes = [
   "/", "/auth", "/reset-password", "/admin", "/admin-login",
-  "/dashboard", "/knowledge-base", "/ai-course-builder", "/appraisal", "/compliance", "/induction", "/departments",
+  "/dashboard", "/teach", "/students", "/develop", "/school", "/resources", "/teaching-learning", "/resource-generator",
+  "/knowledge-base", "/ai-course-builder", "/appraisal", "/compliance", "/induction", "/departments",
   "/cpd", "/course-audit", "/course-quality-dashboard", "/presentation-engagement-audit", "/presentation-overhaul-final", "/facilitator", "/impact",
   "/development", "/pathways", "/pathways/personal", "/adaptive", "/subject-cpd", "/reading", "/micro-cpd", "/training", "/recommendations",
   "/simulator", "/actions", "/coach", "/ai-coach", "/coaching", "/needs-audit", "/portfolio", "/standards", "/external-cpd",
@@ -58,6 +59,7 @@ const requiredApiFiles = [
   "app/api/ai-course-builder/route.ts",
   "app/api/knowledge-base/ask/route.ts",
   "app/api/knowledge-base/extract/route.ts",
+  "app/api/resource-generator/route.ts",
 ];
 for (const file of requiredApiFiles) {
   if (!fs.existsSync(path.join(root, file))) failures.push(`Missing critical AI/API bridge: ${file}`);
