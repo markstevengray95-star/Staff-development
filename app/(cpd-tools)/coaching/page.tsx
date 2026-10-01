@@ -1,1 +1,5 @@
-export { default } from "teaching-cpd/app/coaching/page";
+import CoachingHub from "../../components/CoachingHub";
+
+export default function CoachingPage() {
+  return <CoachingHub />;
+}
