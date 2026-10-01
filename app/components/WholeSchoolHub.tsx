@@ -86,9 +86,10 @@ const areaConfig: Record<WholeSchoolArea, AreaConfig> = {
   school: {
     eyebrow: "SCHOOL",
     title: "Whole-school Operations",
-    description: "A single home for communication, leadership, departments, improvement, induction and organisation-level tools.",
+    description: "A single home for the shared calendar, communication, leadership, departments, improvement, induction and organisation-level tools.",
     accent: "School systems",
     tools: [
+      { title: "School Calendar", description: "See meetings, deadlines, CPD, trips and shared school events, with private personal calendar items.", href: "/calendar", icon: "◷", badge: "Phase 44" },
       { title: "Notices Centre", description: "Publish and manage targeted school notices, priorities, expiry dates and staff acknowledgements.", href: "/notices", icon: "✉", roles: leadershipRoles, badge: "Phase 43" },
       { title: "Appraisal", description: "Open shared professional-review information and schedule staff review meetings where your role allows it.", href: "/appraisal", icon: "✓", roles: leadershipRoles, badge: "Phase 42" },
       { title: "School Hub", description: "Open the existing whole-school development and organisation area.", href: "/school-hub", icon: "⌂", roles: leadershipRoles, badge: "Existing" },
@@ -108,9 +109,10 @@ const areaConfig: Record<WholeSchoolArea, AreaConfig> = {
   resources: {
     eyebrow: "RESOURCES",
     title: "Resources & Knowledge",
-    description: "A clear home for school notices, searchable guidance, documents, course packs and policy-related material.",
+    description: "A clear home for the school calendar, notices, searchable guidance, documents, course packs and policy-related material.",
     accent: "Find what you need",
     tools: [
+      { title: "School Calendar", description: "See the school events relevant to you and add private personal reminders.", href: "/calendar", icon: "◷", badge: "Phase 44" },
       { title: "School Notices", description: "Read current school notices, mark items as read and complete required acknowledgements.", href: "/notices", icon: "✉", badge: "Phase 43" },
       { title: "My Teaching Resources", description: "Open your private library of generated and edited classroom resources.", href: "/resource-generator", icon: "✎", roles: teachingRoles, badge: "New" },
       { title: "Curriculum Resources", description: "Open curriculum units, lesson sequences, objectives, vocabulary and assessment guidance.", href: "/curriculum", icon: "▤", roles: teachingRoles, badge: "New" },
@@ -212,9 +214,9 @@ export default function WholeSchoolHub({ area }: { area: WholeSchoolArea }) {
           </div>
         </div>
         <div className="wholeSchoolHeroCard">
-          <span>PHASES 42–43</span>
-          <strong>Review development. Share what matters.</strong>
-          <p>Appraisal now connects objectives, evidence and professional learning, while the Notices Centre gives staff a focused school communication workflow.</p>
+          <span>PHASE 44</span>
+          <strong>One shared staff calendar.</strong>
+          <p>Meetings, deadlines, CPD, trips and school events now sit in one role-aware calendar, alongside private personal reminders.</p>
         </div>
       </section>
 
