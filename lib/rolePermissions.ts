@@ -51,7 +51,7 @@ const PUBLIC_PATHS = ["/auth", "/reset-password", "/admin-login", "/owner-login"
 const ROUTE_PERMISSIONS: Array<[string, StaffPermission]> = [
   ["/owner-portal", "platform:manage"],
   ["/platform", "platform:manage"],
-  ["/admin", "admin:manage"],
+  ["/admin", "platform:manage"],
   ["/staff-access", "admin:manage"],
   ["/staff-sync", "admin:manage"],
   ["/organisation", "admin:manage"],
