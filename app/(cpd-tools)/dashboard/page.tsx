@@ -1,1 +1,5 @@
-export { default } from "teaching-cpd/app/dashboard/page";
+import PersonalisedStaffDashboard from "../../components/PersonalisedStaffDashboard";
+
+export default function DashboardPage() {
+  return <PersonalisedStaffDashboard />;
+}
