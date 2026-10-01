@@ -74,6 +74,8 @@ const ROUTE_PERMISSIONS: Array<[string, StaffPermission]> = [
   ["/zones-school", "school:view"],
   ["/teaching-learning", "teach:view"],
   ["/resource-generator", "teach:view"],
+  ["/department-hub", "teach:view"],
+  ["/curriculum", "teach:view"],
   ["/teach", "teach:view"],
   ["/students", "students:view"],
   ["/develop", "develop:view"],
