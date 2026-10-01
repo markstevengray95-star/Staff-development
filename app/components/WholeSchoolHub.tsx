@@ -2,20 +2,12 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { getSupabaseBrowserClient } from "@/lib/supabase";
+import { STAFF_ROLE_LABELS, resolveStaffAccess, type StaffRole } from "@/lib/rolePermissions";
 import "./WholeSchoolHub.css";
 
 export type WholeSchoolArea = "teach" | "students" | "develop" | "school" | "resources";
-
-type RoleId =
-  | "teacher"
-  | "tutor"
-  | "hod"
-  | "pastoral"
-  | "send-eal"
-  | "slt"
-  | "administrator"
-  | "support"
-  | "super-admin";
+type RoleId = StaffRole;
 
 type ToolCard = {
   title: string;
@@ -34,18 +26,7 @@ type AreaConfig = {
   tools: ToolCard[];
 };
 
-const roles: { id: RoleId; label: string }[] = [
-  { id: "teacher", label: "Teacher" },
-  { id: "tutor", label: "Tutor" },
-  { id: "hod", label: "Head of Department" },
-  { id: "pastoral", label: "Pastoral Lead" },
-  { id: "send-eal", label: "SEND / EAL" },
-  { id: "slt", label: "SLT" },
-  { id: "administrator", label: "Administrator" },
-  { id: "support", label: "Support Staff" },
-  { id: "super-admin", label: "Super Admin" },
-];
-
+const roles: { id: RoleId; label: string }[] = (Object.keys(STAFF_ROLE_LABELS) as RoleId[]).map((id) => ({ id, label: STAFF_ROLE_LABELS[id] }));
 const leadershipRoles: RoleId[] = ["hod", "pastoral", "send-eal", "slt", "administrator", "super-admin"];
 const seniorRoles: RoleId[] = ["slt", "administrator", "super-admin"];
 const teachingRoles: RoleId[] = ["teacher", "tutor", "hod", "pastoral", "send-eal", "slt", "super-admin"];
@@ -140,19 +121,32 @@ function roleCanSee(role: RoleId, card: ToolCard) {
 
 export default function WholeSchoolHub({ area }: { area: WholeSchoolArea }) {
   const [role, setRole] = useState<RoleId>("teacher");
+  const [authorizedRole, setAuthorizedRole] = useState<RoleId | null>(null);
   const config = areaConfig[area];
 
   useEffect(() => {
-    const saved = window.localStorage.getItem("staff-development-role") as RoleId | null;
-    if (saved && roles.some((item) => item.id === saved)) setRole(saved);
+    let mounted = true;
+    (async () => {
+      const client = getSupabaseBrowserClient();
+      const { data } = await client.auth.getUser();
+      if (!data.user) return;
+      const access = await resolveStaffAccess(client, data.user);
+      if (!mounted) return;
+      setAuthorizedRole(access.role);
+      setRole(access.role);
+      window.localStorage.setItem("staff-development-authorized-role", access.role);
+      window.localStorage.setItem("staff-development-authorized-role-label", STAFF_ROLE_LABELS[access.role]);
+    })().catch((error) => console.error("Could not resolve whole-school role", error));
+    return () => { mounted = false; };
   }, []);
 
+  const canPreview = authorizedRole === "super-admin";
   const visibleTools = useMemo(() => config.tools.filter((tool) => roleCanSee(role, tool)), [config.tools, role]);
-  const roleLabel = roles.find((item) => item.id === role)?.label || "Teacher";
+  const roleLabel = STAFF_ROLE_LABELS[role];
 
   function changeRole(nextRole: RoleId) {
+    if (!canPreview) return;
     setRole(nextRole);
-    window.localStorage.setItem("staff-development-role", nextRole);
   }
 
   return (
@@ -171,12 +165,18 @@ export default function WholeSchoolHub({ area }: { area: WholeSchoolArea }) {
           ))}
         </nav>
 
-        <label className="wholeSchoolRole">
-          <span>View as</span>
-          <select value={role} onChange={(event) => changeRole(event.target.value as RoleId)}>
-            {roles.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}
-          </select>
-        </label>
+        <div className="wholeSchoolRole">
+          {canPreview ? (
+            <>
+              <span>Preview as</span>
+              <select value={role} onChange={(event) => changeRole(event.target.value as RoleId)}>
+                {roles.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}
+              </select>
+            </>
+          ) : (
+            <><span>Your role</span><strong>{authorizedRole ? STAFF_ROLE_LABELS[authorizedRole] : "Checking…"}</strong></>
+          )}
+        </div>
       </header>
 
       <section className="wholeSchoolHero">
@@ -190,18 +190,18 @@ export default function WholeSchoolHub({ area }: { area: WholeSchoolArea }) {
           </div>
         </div>
         <div className="wholeSchoolHeroCard">
-          <span>PHASE 28</span>
-          <strong>Whole-school structure</strong>
-          <p>CPD, student support and school tools are now grouped by purpose instead of appearing as one long feature list.</p>
+          <span>PHASE 30</span>
+          <strong>Role-secured access</strong>
+          <p>Navigation reflects your signed-in role and restricted URLs are checked independently before their content is shown.</p>
         </div>
       </section>
 
       <section className="wholeSchoolSectionHeading">
         <div>
-          <span>YOUR AREA</span>
+          <span>{canPreview ? "ADMIN PREVIEW" : "YOUR ACCESS"}</span>
           <h2>{roleLabel} tools</h2>
         </div>
-        <p>Role filtering changes navigation only. Secure database permissions are handled separately in the permissions phase.</p>
+        <p>{canPreview ? "Previewing changes what the super admin sees here; it never changes the account’s real permissions." : "Your signed-in school role controls this view. Direct access to restricted pages is checked separately."}</p>
       </section>
 
       <section className="wholeSchoolToolGrid">
@@ -223,7 +223,7 @@ export default function WholeSchoolHub({ area }: { area: WholeSchoolArea }) {
       {visibleTools.length === 0 && (
         <section className="wholeSchoolEmpty">
           <strong>No tools are assigned to this role in this area yet.</strong>
-          <p>Choose another whole-school area above or switch the preview role.</p>
+          <p>Choose another whole-school area above.</p>
         </section>
       )}
     </main>
