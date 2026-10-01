@@ -39,6 +39,7 @@ export default function DepartmentHubPanel() {
   const [organizationId, setOrganizationId] = useState<string | null>(null);
   const [ownDepartment, setOwnDepartment] = useState("");
   const [department, setDepartment] = useState("");
+  const [departmentOptions, setDepartmentOptions] = useState<string[]>([]);
   const [items, setItems] = useState<HubItem[]>([]);
   const [staff, setStaff] = useState<StaffRow[]>([]);
   const [curriculumCount, setCurriculumCount] = useState(0);
@@ -78,7 +79,24 @@ export default function DepartmentHubPanel() {
       setOrganizationId(org);
       setOwnDepartment(dept);
       setDepartment(dept);
-      if (org) await loadDepartment(org, dept, access.role);
+
+      if (org) {
+        if (wholeSchoolRoles.includes(access.role)) {
+          const [directoryResult, curriculumResult, hubResult] = await Promise.all([
+            client.from("organisation_staff_directory").select("department").eq("organisation_id", org).eq("active", true),
+            client.from("school_curriculum_units").select("department").eq("organization_id", org),
+            client.from("department_hub_items").select("department").eq("organization_id", org),
+          ]);
+          const options = new Set<string>([dept]);
+          (directoryResult.data || []).forEach((row) => row.department && options.add(row.department));
+          (curriculumResult.data || []).forEach((row) => row.department && options.add(row.department));
+          (hubResult.data || []).forEach((row) => row.department && options.add(row.department));
+          setDepartmentOptions(Array.from(options).filter(Boolean).sort());
+        } else {
+          setDepartmentOptions([dept]);
+        }
+        await loadDepartment(org, dept, access.role);
+      }
       setLoading(false);
     })().catch((error) => {
       console.error("Department hub load failed", error);
@@ -112,10 +130,10 @@ export default function DepartmentHubPanel() {
   }
 
   const departments = useMemo(() => {
-    const values = new Set<string>([ownDepartment, department]);
+    const values = new Set<string>([ownDepartment, department, ...departmentOptions]);
     staff.forEach((person) => person.department && values.add(person.department));
     return Array.from(values).filter(Boolean).sort();
-  }, [department, ownDepartment, staff]);
+  }, [department, departmentOptions, ownDepartment, staff]);
 
   const visibleItems = items.filter((item) => item.item_type === activeType);
   const upcoming = items.filter((item) => item.event_date && item.event_date >= new Date().toISOString().slice(0, 10)).sort((a, b) => String(a.event_date).localeCompare(String(b.event_date))).slice(0, 4);
