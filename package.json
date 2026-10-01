@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "audit:platform": "node scripts/final-platform-audit.mjs"
+    "audit:platform": "node scripts/final-platform-audit.mjs",
+    "audit:courses": "node scripts/audit-concise-courses.cjs && node scripts/audit-learning-tasks.cjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.117.1",

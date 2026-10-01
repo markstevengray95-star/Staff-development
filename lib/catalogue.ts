@@ -1,3 +1,5 @@
+import { shortCourses } from "./shortCourses";
+import { moduleTimeBudget, withCourseTiming } from "./courseTiming";
 import {
   categoryOrder,
   courses as sourceCourses,
@@ -111,6 +113,7 @@ import type {
   Phase12SimulationPack,
   Phase11to12Audit,
 } from "teaching-cpd/lib/catalogue";
+import { conciseCourse } from "./conciseCourses";
 
 export { categoryOrder, COURSE_TEMPLATE_STAGES, COURSE_TEMPLATE_VERSION };
 export const categories = categoryOrder;
@@ -213,14 +216,14 @@ function moduleReflection(module: SourceModule): string {
 }
 
 function adaptCourse(course: SourceCourse): Course {
-  const minutes = Math.max(5, Math.round(course.duration / Math.max(1, course.modules.length)));
+  const budgets = moduleTimeBudget(course);
   return {
     ...course,
     audience: course.recommendedFor.join(", ") || "All staff",
     outcomes: course.objectives,
-    modules: course.modules.map(module => ({
+    modules: course.modules.map((module, index) => ({
       ...module,
-      minutes,
+      minutes: budgets[index],
       summary: moduleSummary(module),
       keyPoints: moduleKeyPoints(module),
       activity: moduleActivity(module),
@@ -229,7 +232,14 @@ function adaptCourse(course: SourceCourse): Course {
   };
 }
 
-export const courses: Course[] = sourceCourses.map(adaptCourse);
+export const keyCourses: Course[] = sourceCourses.map(conciseCourse).map(withCourseTiming).map(adaptCourse);
+export const quickCourses: Course[] = shortCourses.map(adaptCourse);
+export const courses: Course[] = [...quickCourses, ...keyCourses];
+export const extendedCourses: Course[] = sourceCourses.map(course => {
+  const core = withCourseTiming(conciseCourse(course));
+  const duration = Math.ceil(core.duration * course.modules.length / core.modules.length / 5) * 5;
+  return adaptCourse({ ...course, duration });
+});
 
 export function getPhase7FacilitatorPlan(course: Course, routeMinutes: Phase7RouteMinutes = 60) {
   return sourceGetPhase7FacilitatorPlan(course as unknown as SourceCourse, routeMinutes);

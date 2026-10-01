@@ -18,5 +18,7 @@ jobs:
         run: npm install
       - name: Audit routes and migration integrity
         run: npm run audit:platform
+      - name: Audit concise course content and saved progress
+        run: npm run audit:courses
       - name: Build application
         run: npm run build

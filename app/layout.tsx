@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
-import CoursePresentationController from "teaching-cpd/app/components/CoursePresentationController";
-import CoursePresenterPhase3Controller from "teaching-cpd/app/components/CoursePresenterPhase3Controller";
+import LegacyPresentationEnhancements from "./components/LegacyPresentationEnhancements";
 import CoursePracticePhase4Controller from "teaching-cpd/app/components/CoursePracticePhase4Controller";
 import CourseAssessmentPhase5Controller from "teaching-cpd/app/components/CourseAssessmentPhase5Controller";
 import CourseFollowThroughPhase6Controller from "teaching-cpd/app/components/CourseFollowThroughPhase6Controller";
 import CourseFacilitatorPhase7Controller from "teaching-cpd/app/components/CourseFacilitatorPhase7Controller";
-import CourseReadingPhase2Controller from "teaching-cpd/app/components/CourseReadingPhase2Controller";
 import CourseWorkshopPhase3Controller from "teaching-cpd/app/components/CourseWorkshopPhase3Controller";
 import CourseProgressiveCasePhase4Controller from "teaching-cpd/app/components/CourseProgressiveCasePhase4Controller";
 import CourseLivePresenterPhase5Controller from "teaching-cpd/app/components/CourseLivePresenterPhase5Controller";
@@ -30,7 +28,6 @@ import CoursePersonalisedEntryPhase28Controller from "teaching-cpd/app/component
 import CourseProfessionalToolkitPhase29Controller from "teaching-cpd/app/components/CourseProfessionalToolkitPhase29Controller";
 import CourseImplementationChallengePhase30Controller from "teaching-cpd/app/components/CourseImplementationChallengePhase30Controller";
 import CourseCertificationExamPhase31Controller from "teaching-cpd/app/components/CourseCertificationExamPhase31Controller";
-import CourseInteractivityController from "teaching-cpd/app/components/CourseInteractivityController";
 import AccessGate from "./components/AccessGate";
 import CpdNavigationBridge from "./components/CpdNavigationBridge";
 import ZonesQuickAccess from "./components/ZonesQuickAccess";
@@ -88,14 +85,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body>
-        <CoursePresentationController />
-        <CoursePresenterPhase3Controller />
+        <LegacyPresentationEnhancements />
         <CoursePracticePhase4Controller />
         <CourseAssessmentPhase5Controller />
         <CourseAssessmentPhase5Sync />
         <CourseFollowThroughPhase6Controller />
         <CourseFacilitatorPhase7Controller />
-        <CourseReadingPhase2Controller />
         <CourseWorkshopPhase3Controller />
         <CourseProgressiveCasePhase4Controller />
         <CourseLivePresenterPhase5Controller />
@@ -120,7 +115,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <CourseProfessionalToolkitPhase29Controller />
         <CourseImplementationChallengePhase30Controller />
         <CourseCertificationExamPhase31Controller />
-        <CourseInteractivityController />
         <CpdNavigationBridge />
         <DevelopmentFeatureNav />
         <HomeNavigationSimplifier />

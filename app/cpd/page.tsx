@@ -1,10 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { categoryOrder, courses } from "teaching-cpd/lib/catalogue";
-import type { Course, Module } from "teaching-cpd/lib/data";
-import CourseLab from "teaching-cpd/app/components/CourseLab";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { categoryOrder, courses } from "@/lib/catalogue";
+import type { Course, Module } from "@/lib/catalogue";
+import { completedModuleCount } from "@/lib/conciseCourses";
+import { CourseWorkspace } from "@/app/components/CourseWorkspace";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
+import { shortCourseParents } from "@/lib/shortCourses";
+import { isAssessmentBank } from "@/lib/assessmentQuestions";
 
 type ProgressItem = { completedModules: string[]; reflections: Record<string, string>; completedAt?: string };
 type ProgressState = Record<string, ProgressItem>;
@@ -18,8 +21,16 @@ export default function FullCpdLibrary() {
   const [view, setView] = useState<View>("library");
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
+  const [length, setLength] = useState("All");
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [progress, setProgress] = useState<ProgressState>({});
+  const progressRef = useRef<ProgressState>({});
+  const writeQueue = useRef<Promise<void>>(Promise.resolve());
+  function enqueueWrite(task: () => Promise<void>) {
+    const next = writeQueue.current.then(task);
+    writeQueue.current = next.catch(() => {});
+    return next;
+  }
   const [userId, setUserId] = useState("");
   const [displayName, setDisplayName] = useState("Staff member");
   const [platformAdmin, setPlatformAdmin] = useState(false);
@@ -67,6 +78,7 @@ export default function FullCpdLibrary() {
       setAllAccess(isAdmin || hasAllCpd || planIncludesAllCpd);
       setSingleCourseIds(singles);
       setProgress(state);
+      progressRef.current = state;
       setReady(true);
     })().catch((error) => {
       console.error(error);
@@ -81,8 +93,9 @@ export default function FullCpdLibrary() {
   const filtered = useMemo(() => courses.filter((course) => {
     const matchesCategory = category === "All" || course.category === category;
     const haystack = `${course.title} ${course.summary} ${course.category} ${course.recommendedFor.join(" ")}`.toLowerCase();
-    return matchesCategory && haystack.includes(search.toLowerCase());
-  }), [search, category]);
+    const matchesLength = length === "All" || (length === "Short" ? course.duration <= 20 : course.duration === Number(length));
+    return matchesCategory && matchesLength && haystack.includes(search.toLowerCase());
+  }), [search, category, length]);
 
   const completed = useMemo(() => courses.filter((course) => isCourseComplete(course, progress[course.id])), [progress]);
   const active = useMemo(() => courses.filter((course) => {
@@ -91,7 +104,7 @@ export default function FullCpdLibrary() {
   }), [progress]);
 
   function canOpen(course: Course) {
-    return allAccess || course.id === FREE_COURSE_ID || singleCourseIds.includes(course.id);
+    return allAccess || course.id === FREE_COURSE_ID || singleCourseIds.includes(course.id) || singleCourseIds.includes(shortCourseParents[course.id]);
   }
 
   function openCourse(course: Course) {
@@ -108,17 +121,21 @@ export default function FullCpdLibrary() {
   }
 
   async function completeModule(course: Course, module: Module, reflection?: string) {
-    if (!userId) return;
-    const current = progress[course.id] || { completedModules: [], reflections: {} };
+    return enqueueWrite(() => persistModule(course, module, reflection));
+  }
+
+  async function persistModule(course: Course, module: Module, reflection?: string) {
+    if (!userId) throw new Error("Sign in to save your course progress.");
+    const current = progressRef.current[course.id] || { completedModules: [], reflections: {} };
     const completedModules = current.completedModules.includes(module.id) ? current.completedModules : [...current.completedModules, module.id];
-    const reflections = reflection === undefined ? current.reflections : { ...current.reflections, [module.id]: reflection };
-    const finished = course.modules.every((item) => completedModules.includes(item.id));
+    const reflections = reflection === undefined ? current.reflections : { ...current.reflections, [module.id]: reflection, ...(isAssessmentBank(module) ? { [`phase5:${module.id.split("-").at(-1)}`]: reflection } : {}) };
+    const requiredCourse = courses.find(item => item.id === course.id) || course;
+    const finished = requiredCourse.modules.every((item) => completedModules.includes(item.id));
     const next: ProgressItem = {
       completedModules,
       reflections,
       ...(finished ? { completedAt: current.completedAt || new Date().toISOString() } : current.completedAt ? { completedAt: current.completedAt } : {}),
     };
-    setProgress((previous) => ({ ...previous, [course.id]: next }));
     const { error } = await getSupabaseBrowserClient().from("staff_development_course_progress").upsert({
       user_id: userId,
       course_id: course.id,
@@ -127,14 +144,20 @@ export default function FullCpdLibrary() {
       completed_at: next.completedAt || null,
       updated_at: new Date().toISOString(),
     }, { onConflict: "user_id,course_id" });
-    flash(error ? `Could not save CPD progress: ${error.message}` : finished ? "Course complete — your CPD record has been updated." : "Progress saved to your CPD record.");
+    if (error) { flash(`Could not save CPD progress: ${error.message}`); throw error; }
+    progressRef.current = { ...progressRef.current, [course.id]: next };
+    setProgress((previous) => ({ ...previous, [course.id]: next }));
+    flash(finished ? "Course complete — your CPD record has been updated." : "Progress saved to your CPD record.");
   }
 
   async function saveCourseMeta(course: Course, key: string, value: string) {
-    if (!userId) return;
-    const current = progress[course.id] || { completedModules: [], reflections: {} };
+    return enqueueWrite(() => persistCourseMeta(course, key, value));
+  }
+
+  async function persistCourseMeta(course: Course, key: string, value: string) {
+    if (!userId) throw new Error("Sign in to save your course notes.");
+    const current = progressRef.current[course.id] || { completedModules: [], reflections: {} };
     const next = { ...current, reflections: { ...current.reflections, [key]: value } };
-    setProgress((previous) => ({ ...previous, [course.id]: next }));
     const { error } = await getSupabaseBrowserClient().from("staff_development_course_progress").upsert({
       user_id: userId,
       course_id: course.id,
@@ -143,7 +166,9 @@ export default function FullCpdLibrary() {
       completed_at: next.completedAt || null,
       updated_at: new Date().toISOString(),
     }, { onConflict: "user_id,course_id" });
-    if (error) flash(`Could not save Course Lab work: ${error.message}`);
+    if (error) { flash(`Could not save course notes: ${error.message}`); throw error; }
+    progressRef.current = { ...progressRef.current, [course.id]: next };
+    setProgress((previous) => ({ ...previous, [course.id]: next }));
   }
 
   if (!ready) return <main className="loading">Opening the complete CPD library…</main>;
@@ -172,7 +197,8 @@ export default function FullCpdLibrary() {
           <section className="pageTitle"><div><span className="eyebrow">COMPLETE CPD ACADEMY</span><h1>Professional learning built for practice.</h1><p>The full CPD app is now part of Staff Development: detailed reading, presentations, visuals, scenarios, knowledge checks, practice, Course Lab and implementation activities.</p></div></section>
           <section className="statGrid"><Stat value={String(courses.length)} label="Courses" sub="full catalogue" /><Stat value={String(completed.length)} label="Completed" sub="on your record" /><Stat value={String(active.length)} label="In progress" sub="continue learning" /><Stat value={allAccess ? "Full" : "1 + owned"} label="Access" sub={platformAdmin ? "admin unlocked" : "your current plan"} /></section>
           <div className="filters"><input className="search" placeholder="Search courses, topics or roles…" value={search} onChange={(event) => setSearch(event.target.value)} /><div className="chips"><button className={category === "All" ? "chip active" : "chip"} onClick={() => setCategory("All")}>All</button>{categoryOrder.map((item) => <button key={item} className={category === item ? "chip active" : "chip"} onClick={() => setCategory(item)}>{item}</button>)}</div></div>
-          <div className="libraryMeta"><strong>{filtered.length} courses</strong><span>Latest CPD presentation build · cloud-saved progress</span></div>
+          <div className="courseLengthFilter"><label>Planned course length <select value={length} onChange={e => setLength(e.target.value)}><option value="All">All lengths</option><option value="Short">Short courses · 15–20 minutes</option>{[45, 60, 75, 90].map(m => <option key={m} value={m}>{m} minutes</option>)}</select></label><p>15 linked short courses, plus core routes from 45 to 90 minutes. Timings are guided pacing budgets, not observed completion times; optional extensions add time.</p></div>
+          <div className="libraryMeta"><strong>{filtered.length} courses</strong><span>Choose a focused refresher or a fuller course · cloud-saved progress</span></div>
           <div className="cardGrid">{filtered.map((course) => <LibraryCard key={course.id} course={course} state={progress[course.id]} locked={!canOpen(course)} free={course.id === FREE_COURSE_ID && !allAccess} onClick={() => openCourse(course)} />)}</div>
         </>}
 
@@ -194,62 +220,9 @@ export default function FullCpdLibrary() {
   </div>;
 }
 
-function CourseWorkspace({ course, state, onClose, onComplete, onSaveMeta, onOpenCourse }: { course: Course; state?: ProgressItem; onClose: () => void; onComplete: (course: Course, module: Module, reflection?: string) => Promise<void>; onSaveMeta: (key: string, value: string) => Promise<void>; onOpenCourse: (course: Course) => void }) {
-  const completed = state?.completedModules || [];
-  const firstIncomplete = course.modules.findIndex((module) => !completed.includes(module.id));
-  const [index, setIndex] = useState(firstIncomplete < 0 ? 0 : firstIncomplete);
-  const [showLab, setShowLab] = useState(false);
-  const module = course.modules[index];
-  const percent = state?.completedAt ? 100 : Math.round((completed.length / course.modules.length) * 100);
-
-  return <div className="modalBackdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
-    <section className={`courseModal ${showLab ? "labMode" : ""}`}>
-      <header className="courseModalHead"><div><span className="eyebrow">{course.category} · {course.level} · {course.duration} MIN</span><h2>{course.title}</h2></div><div className="courseModalHeadActions"><button className={showLab ? "primary courseLabToggle" : "secondary courseLabToggle"} onClick={() => setShowLab((value) => !value)}>{showLab ? "Back to modules" : "Open Course Lab"}</button><button className="iconButton" aria-label="Close course" onClick={onClose}>×</button></div></header>
-      <div className="courseProgress"><div><span>{completed.length} of {course.modules.length} modules complete</span><strong>{percent}%</strong></div><div className="progress"><span style={{ width: `${percent}%` }} /></div></div>
-      {showLab ? <div className="courseLabViewport"><CourseLab course={course} allCourses={courses} savedMeta={state?.reflections || {}} completedCount={state?.completedAt ? course.modules.length : completed.length} totalModules={course.modules.length} onSaveMeta={onSaveMeta} onOpenCourse={onOpenCourse} /></div> : <div className="moduleLayout">
-        <aside className="moduleNav">{course.modules.map((item, itemIndex) => <button key={item.id} className={`${itemIndex === index ? "current" : ""} ${completed.includes(item.id) ? "done" : ""}`} onClick={() => setIndex(itemIndex)}><span>{completed.includes(item.id) ? "✓" : itemIndex + 1}</span><div><strong>{item.title}</strong><small>{item.type}</small></div></button>)}</aside>
-        <ModuleViewer course={course} module={module} completed={completed.includes(module.id)} savedResponse={state?.reflections[module.id] || ""} onComplete={onComplete} onPrevious={() => setIndex((value) => Math.max(0, value - 1))} onNext={() => setIndex((value) => Math.min(course.modules.length - 1, value + 1))} index={index} total={course.modules.length} />
-      </div>}
-    </section>
-  </div>;
-}
-
-function ModuleViewer({ course, module, completed, savedResponse, onComplete, onPrevious, onNext, index, total }: { course: Course; module: Module; completed: boolean; savedResponse: string; onComplete: (course: Course, module: Module, reflection?: string) => Promise<void>; onPrevious: () => void; onNext: () => void; index: number; total: number }) {
-  const [choice, setChoice] = useState<number | null>(null);
-  const [response, setResponse] = useState(savedResponse);
-  const [checks, setChecks] = useState<number[]>([]);
-  const [feedback, setFeedback] = useState("");
-  const [busy, setBusy] = useState(false);
-
-  useEffect(() => { setChoice(null); setResponse(savedResponse); setChecks([]); setFeedback(""); }, [module.id, savedResponse]);
-
-  async function finish() {
-    if (module.type === "quiz" && choice !== module.answer) { setFeedback("Choose the correct answer before completing this knowledge check."); return; }
-    if (module.type === "scenario" && choice === null) { setFeedback("Choose a response before continuing."); return; }
-    if (module.type === "checklist" && checks.length !== module.items.length) { setFeedback("Work through every checklist item before completing this module."); return; }
-    if (module.type === "reflection" && response.trim().length < 10) { setFeedback("Add a little more detail so this reflection is useful when you revisit it."); return; }
-    if (module.type === "activity" && response.trim().length < (module.minimumCharacters ?? 30)) { setFeedback(`Add at least ${module.minimumCharacters ?? 30} characters before completing this activity.`); return; }
-    setBusy(true);
-    await onComplete(course, module, module.type === "reflection" || module.type === "activity" ? response.trim() : undefined);
-    setBusy(false);
-    setFeedback("Saved to your CPD record.");
-  }
-
-  return <article className="moduleContent">
-    <span className={`moduleType ${module.type}`}>{module.type.toUpperCase()}</span><h2>{module.title}</h2>
-    {module.type === "content" && <><p className="lead">{module.body}</p>{module.keyPoints?.length ? <div className="keyPointList">{module.keyPoints.map((point) => <div key={point} className="keyPoint"><span>✓</span><p>{point}</p></div>)}</div> : null}</>}
-    {module.type === "quiz" && <div className="interactiveBlock"><p className="lead">{module.question}</p><div className="optionList">{module.options.map((option, optionIndex) => <button key={option} className={choice === optionIndex ? "option selected" : "option"} onClick={() => { setChoice(optionIndex); setFeedback(optionIndex === module.answer ? module.feedback : "Not quite. Review the idea and try another response."); }}><span>{String.fromCharCode(65 + optionIndex)}</span>{option}</button>)}</div>{feedback && <div className="feedback">{feedback}</div>}</div>}
-    {module.type === "scenario" && <div className="interactiveBlock"><p className="lead">{module.prompt}</p><div className="optionList">{module.options.map((option, optionIndex) => <button key={option.label} className={choice === optionIndex ? "option selected" : "option"} onClick={() => { setChoice(optionIndex); setFeedback(option.feedback); }}><span>{optionIndex + 1}</span>{option.label}</button>)}</div>{feedback && <div className="feedback">{feedback}</div>}</div>}
-    {module.type === "reflection" && <div className="interactiveBlock"><p className="lead">{module.prompt}</p><textarea className="reflectionBox" value={response} onChange={(event) => setResponse(event.target.value)} placeholder="Record your professional reflection…" />{feedback && <div className="feedback">{feedback}</div>}</div>}
-    {module.type === "activity" && <div className="interactiveBlock"><p className="lead">{module.prompt}</p><ol className="activitySteps">{module.instructions.map((instruction) => <li key={instruction}>{instruction}</li>)}</ol><textarea className="reflectionBox" value={response} onChange={(event) => setResponse(event.target.value)} placeholder={module.placeholder || "Record your response…"} />{feedback && <div className="feedback">{feedback}</div>}</div>}
-    {module.type === "checklist" && <div className="interactiveBlock"><p className="lead">{module.prompt}</p><div className="checklist">{module.items.map((item, itemIndex) => <label key={item}><input type="checkbox" checked={checks.includes(itemIndex)} onChange={() => setChecks((current) => current.includes(itemIndex) ? current.filter((value) => value !== itemIndex) : [...current, itemIndex])} /><span>{item}</span></label>)}</div>{feedback && <div className="feedback">{feedback}</div>}</div>}
-    {module.type === "visual" && <div className={`visualModule ${module.layout}`}><p className="lead">{module.caption}</p><div className="visualItems">{module.items.map((item, itemIndex) => <div className="visualItem" key={`${item.heading}-${itemIndex}`}><span className="visualIcon">{item.icon || itemIndex + 1}</span><h3>{item.heading}</h3><p>{item.text}</p></div>)}</div>{feedback && <div className="feedback">{feedback}</div>}</div>}
-    <div className="moduleFooter"><button className="secondary" disabled={index === 0} onClick={onPrevious}>← Previous</button><button className={completed ? "secondary" : "primary"} disabled={busy} onClick={finish}>{busy ? "Saving…" : completed ? "Save / revisit" : "Complete module"}</button><button className="secondary" disabled={index === total - 1} onClick={onNext}>Next →</button></div>
-  </article>;
-}
 
 function LibraryCard({ course, state, locked, free, onClick }: { course: Course; state?: ProgressItem; locked: boolean; free?: boolean; onClick: () => void }) {
-  const done = state?.completedModules.length || 0;
+  const done = completedModuleCount(course, state?.completedModules || []);
   const percent = state?.completedAt ? 100 : Math.round((done / course.modules.length) * 100);
   return <button className="courseCard" onClick={onClick} style={{ textAlign: "left", cursor: "pointer", position: "relative" }}><div className="courseCardTop"><span className="categoryTag">{course.category}</span><span className="levelBadge">{course.level}</span></div><h3>{course.title}</h3><p>{course.summary}</p><div className="courseMeta"><span>{course.duration} min</span><span>{course.modules.length} modules</span>{free && <span>Included</span>}{locked && <span>🔒 Locked</span>}</div><div className="progress"><span style={{ width: `${percent}%` }} /></div><small>{state?.completedAt ? "Completed" : done ? `${done}/${course.modules.length} complete` : locked ? "View access options" : "Ready to start"}</small></button>;
 }
