@@ -1,1 +1,5 @@
-export { default } from "teaching-cpd/app/portfolio/page";
+import ProfessionalPortfolioHub from "../../components/ProfessionalPortfolioHub";
+
+export default function PortfolioPage() {
+  return <ProfessionalPortfolioHub />;
+}
