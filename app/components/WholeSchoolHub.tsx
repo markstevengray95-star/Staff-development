@@ -35,9 +35,11 @@ const areaConfig: Record<WholeSchoolArea, AreaConfig> = {
   teach: {
     eyebrow: "TEACH",
     title: "Teaching & Learning",
-    description: "Plan, improve and share classroom practice from one place. Existing CPD tools remain available, but teaching tools now have their own whole-school home.",
+    description: "Plan, improve and share classroom practice from one place. Practical teaching guidance and classroom resource creation now sit alongside the existing professional-learning tools.",
     accent: "Teaching",
     tools: [
+      { title: "Teaching & Learning Hub", description: "Search practical strategies for retrieval, questioning, adaptive teaching, feedback, literacy and more.", href: "/teaching-learning", icon: "◎", roles: teachingRoles, badge: "Phase 31" },
+      { title: "Teaching Resource Generator", description: "Create, edit, save and download retrieval tasks, quizzes, worksheets, exit tickets and more.", href: "/resource-generator", icon: "✎", roles: teachingRoles, badge: "Phase 32" },
       { title: "Teaching & Learning CPD", description: "Open subject-specific and classroom-practice professional learning.", href: "/subject-cpd", icon: "✦", roles: teachingRoles, badge: "Existing" },
       { title: "Department Hubs", description: "Open department areas, resources, actions and shared development work.", href: "/departments", icon: "▦", roles: teachingRoles, badge: "Existing" },
       { title: "Professional Standards", description: "Connect development activity to professional standards and expectations.", href: "/standards", icon: "✓", roles: teachingRoles, badge: "Existing" },
@@ -86,7 +88,7 @@ const areaConfig: Record<WholeSchoolArea, AreaConfig> = {
       { title: "Staff Induction", description: "Support new staff through the existing induction workflow.", href: "/induction", icon: "✦", roles: leadershipRoles, badge: "Existing" },
       { title: "Compliance Centre", description: "Review mandatory training and compliance activity.", href: "/compliance", icon: "✓", roles: leadershipRoles, badge: "Existing" },
       { title: "Organisation", description: "Open organisation-level configuration and school-wide management tools.", href: "/organisation", icon: "◫", roles: seniorRoles, badge: "Existing" },
-      { title: "Administration", description: "Open platform administration for authorised staff.", href: "/admin", icon: "⚙", roles: seniorRoles, badge: "Restricted" },
+      { title: "Platform Administration", description: "Open unrestricted platform administration for the Super Admin account.", href: "/admin", icon: "⚙", roles: ["super-admin"], badge: "Restricted" },
     ],
   },
   resources: {
@@ -95,6 +97,7 @@ const areaConfig: Record<WholeSchoolArea, AreaConfig> = {
     description: "A clear home for searchable guidance, documents, course packs and policy-related material.",
     accent: "Find what you need",
     tools: [
+      { title: "My Teaching Resources", description: "Open your private library of generated and edited classroom resources.", href: "/resource-generator", icon: "✎", roles: teachingRoles, badge: "New" },
       { title: "Knowledge Base", description: "Search the existing school knowledge and guidance area.", href: "/knowledge-base", icon: "⌕", badge: "Existing" },
       { title: "Safeguarding Documents", description: "Open safeguarding documents and supporting materials.", href: "/safeguarding/documents", icon: "▤", badge: "Existing" },
       { title: "Course Packs", description: "Open reusable CPD and facilitator packs.", href: "/course-packs", icon: "▣", roles: teachingRoles, badge: "Existing" },
@@ -190,9 +193,9 @@ export default function WholeSchoolHub({ area }: { area: WholeSchoolArea }) {
           </div>
         </div>
         <div className="wholeSchoolHeroCard">
-          <span>PHASE 30</span>
-          <strong>Role-secured access</strong>
-          <p>Navigation reflects your signed-in role and restricted URLs are checked independently before their content is shown.</p>
+          <span>PHASES 31–32</span>
+          <strong>Teaching toolkit expanded</strong>
+          <p>The Teach area now combines evidence-informed classroom practice with a personal resource generator and library.</p>
         </div>
       </section>
 
