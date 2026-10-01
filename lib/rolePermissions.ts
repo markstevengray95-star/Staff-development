@@ -72,6 +72,9 @@ const ROUTE_PERMISSIONS: Array<[string, StaffPermission]> = [
   ["/improvement", "school:view"],
   ["/learning-walks", "school:view"],
   ["/zones-school", "school:view"],
+  ["/teach", "teach:view"],
+  ["/students", "students:view"],
+  ["/develop", "develop:view"],
 ];
 
 export function hasStaffPermission(role: StaffRole, permission: StaffPermission) {
