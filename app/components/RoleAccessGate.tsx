@@ -10,15 +10,22 @@ import {
   resolveStaffAccess,
 } from "@/lib/rolePermissions";
 
+const PUBLIC_PATHS = ["/auth", "/reset-password", "/admin-login", "/owner-login", "/access-denied", "/verify", "/join"];
+
+function isPublicPath(pathname: string) {
+  return PUBLIC_PATHS.some((path) => pathname === path || pathname.startsWith(`${path}/`));
+}
+
 export default function RoleAccessGate({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const publicPath = isPublicPath(pathname);
   const requiredPermission = permissionForPath(pathname);
-  const [allowed, setAllowed] = useState(requiredPermission === null);
+  const [allowed, setAllowed] = useState(publicPath);
 
   useEffect(() => {
     let active = true;
 
-    if (!requiredPermission) {
+    if (publicPath) {
       setAllowed(true);
       return () => { active = false; };
     }
@@ -41,7 +48,7 @@ export default function RoleAccessGate({ children }: { children: ReactNode }) {
         window.localStorage.setItem("staff-development-authorized-role", access.role);
         window.localStorage.setItem("staff-development-authorized-role-label", STAFF_ROLE_LABELS[access.role]);
 
-        if (hasStaffPermission(access.role, requiredPermission)) {
+        if (!requiredPermission || hasStaffPermission(access.role, requiredPermission)) {
           setAllowed(true);
           return;
         }
@@ -57,9 +64,9 @@ export default function RoleAccessGate({ children }: { children: ReactNode }) {
     })();
 
     return () => { active = false; };
-  }, [pathname, requiredPermission]);
+  }, [pathname, publicPath, requiredPermission]);
 
-  if (!requiredPermission) return <>{children}</>;
+  if (publicPath) return <>{children}</>;
   if (!allowed) {
     return (
       <main style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: "#f5f7fb", color: "#172033", fontFamily: "system-ui" }}>
