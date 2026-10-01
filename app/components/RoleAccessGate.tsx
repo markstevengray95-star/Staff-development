@@ -45,8 +45,11 @@ export default function RoleAccessGate({ children }: { children: ReactNode }) {
         const access = await resolveStaffAccess(client, auth.user);
         if (!active) return;
 
+        const roleLabel = STAFF_ROLE_LABELS[access.role];
         window.localStorage.setItem("staff-development-authorized-role", access.role);
-        window.localStorage.setItem("staff-development-authorized-role-label", STAFF_ROLE_LABELS[access.role]);
+        window.localStorage.setItem("staff-development-authorized-role-label", roleLabel);
+        window.localStorage.setItem("staff-development-role", access.role);
+        window.localStorage.setItem("staff-development-role-label", roleLabel);
 
         if (!requiredPermission || hasStaffPermission(access.role, requiredPermission)) {
           setAllowed(true);
