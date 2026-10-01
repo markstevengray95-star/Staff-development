@@ -40,7 +40,7 @@ if (duplicateRoutes.length) failures.push(`Duplicate Next.js route outputs: ${[.
 
 const requiredRoutes = [
   "/", "/auth", "/reset-password", "/admin", "/admin-login",
-  "/dashboard", "/teach", "/students", "/develop", "/school", "/resources", "/teaching-learning", "/resource-generator", "/department-hub", "/curriculum", "/pastoral", "/regulation-behaviour", "/send-eal",
+  "/dashboard", "/teach", "/students", "/develop", "/school", "/resources", "/teaching-learning", "/resource-generator", "/department-hub", "/curriculum", "/pastoral", "/regulation-behaviour", "/send-eal", "/interventions", "/professional-learning",
   "/knowledge-base", "/ai-course-builder", "/appraisal", "/compliance", "/induction", "/departments",
   "/cpd", "/course-audit", "/course-quality-dashboard", "/presentation-engagement-audit", "/presentation-overhaul-final", "/facilitator", "/impact",
   "/development", "/pathways", "/pathways/personal", "/adaptive", "/subject-cpd", "/reading", "/micro-cpd", "/training", "/recommendations",
@@ -80,9 +80,7 @@ for (const [file, text] of sourceText) {
 }
 for (const { file, pathname } of literalLinks) {
   if (pathname.startsWith("/api/")) continue;
-  if (!routeMatchers.some(regex => regex.test(pathname))) {
-    warnings.push(`Internal route reference may be unresolved: ${pathname} in ${path.relative(root, file)}`);
-  }
+  if (!routeMatchers.some(regex => regex.test(pathname))) warnings.push(`Internal route reference may be unresolved: ${pathname} in ${path.relative(root, file)}`);
 }
 
 const executableFiles = walk(root).filter(file => {
@@ -97,9 +95,7 @@ for (const file of executableFiles) {
 
 const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
 const cpdDependency = pkg.dependencies?.["teaching-cpd"] || "";
-if (!/^github:markstevengray95-star\/teaching-cpd#[0-9a-f]{40}$/.test(cpdDependency)) {
-  failures.push("teaching-cpd dependency must be pinned to an exact 40-character commit SHA");
-}
+if (!/^github:markstevengray95-star\/teaching-cpd#[0-9a-f]{40}$/.test(cpdDependency)) failures.push("teaching-cpd dependency must be pinned to an exact 40-character commit SHA");
 
 const migrationAudit = path.join(root, "MIGRATION-AUDIT.md");
 if (!fs.existsSync(migrationAudit)) failures.push("MIGRATION-AUDIT.md is missing");
@@ -111,13 +107,6 @@ else {
 }
 
 console.log(`Final platform audit: ${routes.length} routes, ${literalLinks.length} literal internal links, ${warnings.length} warnings, ${failures.length} failures.`);
-if (warnings.length) {
-  console.log("\nWarnings:");
-  warnings.forEach(item => console.log(`- ${item}`));
-}
-if (failures.length) {
-  console.error("\nFailures:");
-  failures.forEach(item => console.error(`- ${item}`));
-  process.exit(1);
-}
+if (warnings.length) { console.log("\nWarnings:"); warnings.forEach(item => console.log(`- ${item}`)); }
+if (failures.length) { console.error("\nFailures:"); failures.forEach(item => console.error(`- ${item}`)); process.exit(1); }
 console.log("\nCritical platform audit passed.");
