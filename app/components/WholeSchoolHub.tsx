@@ -124,7 +124,7 @@ const areaConfig: Record<WholeSchoolArea, AreaConfig> = {
 };
 
 const topNav: { id: "home" | WholeSchoolArea; label: string; href: string; icon: string }[] = [
-  { id: "home", label: "Home", href: "/", icon: "⌂" },
+  { id: "home", label: "Home", href: "/dashboard", icon: "⌂" },
   { id: "teach", label: "Teach", href: "/teach", icon: "✦" },
   { id: "students", label: "Students", href: "/students", icon: "◉" },
   { id: "develop", label: "Develop", href: "/develop", icon: "↗" },
@@ -158,7 +158,7 @@ export default function WholeSchoolHub({ area }: { area: WholeSchoolArea }) {
   return (
     <main className="wholeSchoolHub">
       <header className="wholeSchoolHeader">
-        <Link href="/" className="wholeSchoolBrand" aria-label="Staff Development home">
+        <Link href="/dashboard" className="wholeSchoolBrand" aria-label="Staff Development home">
           <span className="wholeSchoolBrandMark">SD</span>
           <span><strong>Staff Development</strong><small>Whole-school staff platform</small></span>
         </Link>
