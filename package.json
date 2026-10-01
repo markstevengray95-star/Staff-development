@@ -14,12 +14,15 @@
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-qr-code": "2.2.0",
-    "teaching-cpd": "github:markstevengray95-star/teaching-cpd#46ac65634277eb8a69b435b22f96a733b8f22a85"
+    "teaching-cpd": "github:markstevengray95-star/teaching-cpd#7b2359cf0381e28e9c70f07dc707998364a45a8b"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "typescript": "^5.9.0"
+  },
+  "overrides": {
+    "baseline-browser-mapping": "2.11.26"
   }
 }
