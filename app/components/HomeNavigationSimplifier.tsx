@@ -12,7 +12,7 @@ const legacyTools = [
 ] as const;
 
 const wholeSchoolAreas = [
-  ["/", "Home", "⌂", "Your staff dashboard"],
+  ["/dashboard", "Home", "⌂", "Your staff dashboard"],
   ["/teach", "Teach", "✦", "Teaching & learning"],
   ["/students", "Students", "◉", "Pastoral & inclusion"],
   ["/develop", "Develop", "↗", "CPD & professional growth"],
@@ -90,7 +90,7 @@ export default function HomeNavigationSimplifier() {
       <nav className="wholeSchoolSidebar" aria-label="Whole-school navigation">
         <span className="wholeSchoolSidebarLabel">WHOLE-SCHOOL HUB</span>
         {wholeSchoolAreas.map(([href, label, icon, description]) => (
-          <a key={href} href={href} className={href === "/" ? "active" : ""}>
+          <a key={href} href={href}>
             <span className="wholeSchoolSidebarIcon">{icon}</span>
             <span><strong>{label}</strong><small>{description}</small></span>
           </a>
