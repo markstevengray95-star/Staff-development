@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import "./WholeSchoolHub.css";
 
 export type WholeSchoolArea = "teach" | "students" | "develop" | "school" | "resources";
 
