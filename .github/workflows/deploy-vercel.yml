@@ -1,5 +1,6 @@
 name: Deploy Staff Development to Vercel
 
+# Production fallback for the m-dff0/schoolcpd Vercel project.
 on:
   push:
     branches: [main]
