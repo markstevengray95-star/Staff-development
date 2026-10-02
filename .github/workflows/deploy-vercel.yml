@@ -1,0 +1,66 @@
+name: Deploy Staff Development to Vercel
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: staff-development-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check Vercel deployment token
+        id: token
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -n "$VERCEL_TOKEN" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "VERCEL_TOKEN is not configured, so direct production deployment is skipped."
+          fi
+
+      - uses: actions/setup-node@v7
+        if: steps.token.outputs.configured == 'true'
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        if: steps.token.outputs.configured == 'true'
+        run: npm install --no-audit --no-fund
+
+      - name: Install Vercel CLI
+        if: steps.token.outputs.configured == 'true'
+        run: npm install --global vercel@50.1.0
+
+      - name: Link Vercel project
+        if: steps.token.outputs.configured == 'true'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: vercel link --yes --project schoolcpd --scope m-dff0 --token="$VERCEL_TOKEN"
+
+      - name: Pull production environment
+        if: steps.token.outputs.configured == 'true'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=production --scope m-dff0 --token="$VERCEL_TOKEN"
+
+      - name: Build production deployment
+        if: steps.token.outputs.configured == 'true'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: vercel build --prod --scope m-dff0 --token="$VERCEL_TOKEN"
+
+      - name: Deploy production
+        if: steps.token.outputs.configured == 'true'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: vercel deploy --prebuilt --prod --yes --scope m-dff0 --token="$VERCEL_TOKEN"
